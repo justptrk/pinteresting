@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jobs | Triangle Workforce</title>
+  <style>
+    :root {
+      --primary: #1a5276;
+      --primary-light: #2980b9;
+      --accent: #e67e22;
+      --bg: #f5f7fa;
+      --card-bg: #ffffff;
+      --text: #2c3e50;
+      --text-light: #7f8c8d;
+      --border: #e0e4e8;
+      --shadow: 0 2px 8px rgba(0,0,0,0.08);
+      --radius: 10px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* ── Header ────────────────────────────── */
+    .jobs-header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      padding: 3rem 1.5rem 2rem;
+      text-align: center;
+    }
+    .jobs-header h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+    .jobs-header p { opacity: 0.9; font-size: 1.1rem; max-width: 600px; margin: 0 auto; }
+
+    /* ── Filters ───────────────────────────── */
+    .filters {
+      max-width: 900px;
+      margin: -1.5rem auto 1.5rem;
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .filters input[type="text"] {
+      flex: 1;
+      min-width: 200px;
+      padding: 0.6rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .filters input[type="text"]:focus { border-color: var(--primary-light); }
+    .filters select {
+      padding: 0.6rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.95rem;
+      background: white;
+      cursor: pointer;
+      outline: none;
+    }
+
+    /* ── Job Cards ─────────────────────────── */
+    .jobs-container {
+      max-width: 900px;
+      margin: 0 auto 6rem;
+      padding: 0 1.5rem;
+    }
+    .jobs-count {
+      font-size: 0.9rem;
+      color: var(--text-light);
+      margin-bottom: 1rem;
+    }
+    .job-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      border-left: 4px solid var(--primary-light);
+      transition: transform 0.15s, box-shadow 0.15s;
+      cursor: pointer;
+    }
+    .job-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    }
+    .job-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .job-card h3 { font-size: 1.15rem; color: var(--primary); }
+    .job-card .business { font-weight: 600; color: var(--text); margin-top: 0.15rem; }
+    .job-card .meta {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-top: 0.5rem;
+    }
+    .badge {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+    .badge-location { background: #eaf2f8; color: var(--primary); }
+    .badge-type { background: #fef5e7; color: #b7791f; }
+    .badge-category { background: #eafaf1; color: #1e8449; }
+    .badge-pay { background: #f4ecf7; color: #7d3c98; }
+    .job-card .description {
+      margin-top: 0.75rem;
+      color: var(--text-light);
+      font-size: 0.92rem;
+      display: none;
+    }
+    .job-card.expanded .description { display: block; }
+    .job-card .requirements {
+      margin-top: 0.75rem;
+      display: none;
+    }
+    .job-card.expanded .requirements { display: block; }
+    .job-card .requirements h4 {
+      font-size: 0.85rem;
+      margin-bottom: 0.4rem;
+      color: var(--text);
+    }
+    .job-card .requirements ul {
+      list-style: none;
+      padding: 0;
+    }
+    .job-card .requirements li {
+      font-size: 0.88rem;
+      color: var(--text-light);
+      padding: 0.2rem 0;
+      padding-left: 1.2rem;
+      position: relative;
+    }
+    .job-card .requirements li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: var(--primary-light);
+      font-weight: bold;
+    }
+    .job-card .apply-btn {
+      display: none;
+      margin-top: 1rem;
+    }
+    .job-card.expanded .apply-btn { display: inline-block; }
+    .apply-btn button {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 0.6rem 1.5rem;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .apply-btn button:hover { background: #d35400; }
+
+    .no-results {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--text-light);
+    }
+    .no-results h3 { margin-bottom: 0.5rem; color: var(--text); }
+
+    /* ── Chatbot ───────────────────────────── */
+    .chat-toggle {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: white;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .chat-toggle:hover { background: var(--primary-light); transform: scale(1.05); }
+    .chat-toggle .badge-count {
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      background: var(--accent);
+      color: white;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      font-size: 0.7rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+
+    .chat-window {
+      position: fixed;
+      bottom: 5.5rem;
+      right: 1.5rem;
+      width: 380px;
+      max-height: 520px;
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+      display: none;
+      flex-direction: column;
+      z-index: 999;
+      overflow: hidden;
+    }
+    .chat-window.open { display: flex; }
+    .chat-header {
+      background: var(--primary);
+      color: white;
+      padding: 1rem 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .chat-header h3 { font-size: 1rem; }
+    .chat-header .status {
+      font-size: 0.75rem;
+      opacity: 0.8;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .chat-header .status-dot {
+      width: 8px;
+      height: 8px;
+      background: #2ecc71;
+      border-radius: 50%;
+    }
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1rem;
+      max-height: 350px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .chat-msg {
+      max-width: 85%;
+      padding: 0.7rem 1rem;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      word-wrap: break-word;
+    }
+    .chat-msg.bot {
+      background: #eef2f7;
+      color: var(--text);
+      align-self: flex-start;
+      border-bottom-left-radius: 4px;
+    }
+    .chat-msg.user {
+      background: var(--primary);
+      color: white;
+      align-self: flex-end;
+      border-bottom-right-radius: 4px;
+    }
+    .chat-msg.typing {
+      background: #eef2f7;
+      align-self: flex-start;
+      border-bottom-left-radius: 4px;
+    }
+    .typing-dots {
+      display: flex;
+      gap: 4px;
+      padding: 0.2rem 0;
+    }
+    .typing-dots span {
+      width: 8px;
+      height: 8px;
+      background: var(--text-light);
+      border-radius: 50%;
+      animation: typingBounce 1.4s infinite ease-in-out;
+    }
+    .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes typingBounce {
+      0%, 80%, 100% { transform: scale(0.7); opacity: 0.4; }
+      40% { transform: scale(1); opacity: 1; }
+    }
+
+    .chat-input-area {
+      border-top: 1px solid var(--border);
+      padding: 0.75rem;
+      display: flex;
+      gap: 0.5rem;
+    }
+    .chat-input-area input {
+      flex: 1;
+      padding: 0.6rem 0.9rem;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      font-size: 0.9rem;
+      outline: none;
+    }
+    .chat-input-area input:focus { border-color: var(--primary-light); }
+    .chat-input-area button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+      flex-shrink: 0;
+    }
+    .chat-input-area button:hover { background: var(--primary-light); }
+    .chat-input-area button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ── Resume Upload Area ─────────────────── */
+    .resume-upload {
+      border-top: 1px solid var(--border);
+      padding: 0.5rem 0.75rem;
+      background: #fafbfc;
+      display: none;
+    }
+    .resume-upload.active { display: block; }
+    .resume-upload label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      font-size: 0.82rem;
+      color: var(--primary);
+      font-weight: 600;
+      padding: 0.4rem 0.6rem;
+      border: 1px dashed var(--primary-light);
+      border-radius: 6px;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    .resume-upload label:hover { background: #eaf2f8; }
+    .resume-upload input[type="file"] { display: none; }
+    .resume-upload .file-name {
+      font-size: 0.8rem;
+      color: var(--text-light);
+      margin-top: 0.3rem;
+      text-align: center;
+    }
+
+    /* ── Responsive ────────────────────────── */
+    @media (max-width: 640px) {
+      .jobs-header { padding: 2rem 1rem 1.5rem; }
+      .jobs-header h1 { font-size: 1.5rem; }
+      .filters { margin: -1rem 0.75rem 1rem; padding: 1rem; }
+      .jobs-container { padding: 0 0.75rem; }
+      .chat-window {
+        width: calc(100% - 1.5rem);
+        right: 0.75rem;
+        bottom: 5rem;
+        max-height: 60vh;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="jobs-header">
+    <h1>Chapel Hill & Carrboro Jobs</h1>
+    <p>Find your next opportunity at local restaurants and businesses. Powered by Triangle Workforce.</p>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters">
+    <input type="text" id="searchInput" placeholder="Search jobs, businesses, keywords...">
+    <select id="locationFilter">
+      <option value="">All Locations</option>
+      <option value="Chapel Hill">Chapel Hill</option>
+      <option value="Carrboro">Carrboro</option>
+    </select>
+    <select id="categoryFilter">
+      <option value="">All Categories</option>
+      <option value="Restaurant">Restaurant</option>
+      <option value="Retail">Retail</option>
+    </select>
+    <select id="typeFilter">
+      <option value="">All Types</option>
+      <option value="Full-Time">Full-Time</option>
+      <option value="Part-Time">Part-Time</option>
+    </select>
+  </div>
+
+  <!-- Jobs List -->
+  <div class="jobs-container">
+    <div class="jobs-count" id="jobsCount"></div>
+    <div id="jobsList"></div>
+  </div>
+
+  <!-- Chat Toggle Button -->
+  <button class="chat-toggle" id="chatToggle" title="Chat with our job assistant">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+    </svg>
+  </button>
+
+  <!-- Chat Window -->
+  <div class="chat-window" id="chatWindow">
+    <div class="chat-header">
+      <div>
+        <h3>Triangle Workforce Assistant</h3>
+        <div class="status"><span class="status-dot"></span> Online</div>
+      </div>
+    </div>
+    <div class="chat-messages" id="chatMessages">
+      <div class="chat-msg bot">
+        Hi! I'm the Triangle Workforce assistant. I can help you find jobs in Chapel Hill and Carrboro, answer questions about open positions, or help you submit your info for a role. What are you looking for?
+      </div>
+    </div>
+    <div class="resume-upload" id="resumeUpload">
+      <label>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Attach Resume (PDF, DOC, DOCX)
+        <input type="file" id="resumeFile" accept=".pdf,.doc,.docx">
+      </label>
+      <div class="file-name" id="fileName"></div>
+    </div>
+    <div class="chat-input-area">
+      <input type="text" id="chatInput" placeholder="Ask about jobs..." autocomplete="off">
+      <button id="chatSend" title="Send">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // ── Jobs Data & Rendering ──────────────────
+    let jobs = [];
+
+    async function loadJobs() {
+      try {
+        const resp = await fetch('/data/jobs.json');
+        jobs = await resp.json();
+      } catch (e) {
+        console.error('Could not load jobs data:', e);
+        jobs = [];
+      renderJobs();
+    }
+
+    function renderJobs() {
+      const search = document.getElementById('searchInput').value.toLowerCase();
+      const loc = document.getElementById('locationFilter').value;
+      const cat = document.getElementById('categoryFilter').value;
+      const type = document.getElementById('typeFilter').value;
+
+      const filtered = jobs.filter(job => {
+        if (loc && job.location !== loc) return false;
+        if (cat && job.category !== cat) return false;
+        if (type && job.type !== type) return false;
+        if (search) {
+          const haystack = `${job.title} ${job.business} ${job.description} ${job.location} ${job.category}`.toLowerCase();
+          if (!haystack.includes(search)) return false;
+        }
+        return true;
+      });
+
+      const countEl = document.getElementById('jobsCount');
+      countEl.textContent = `${filtered.length} position${filtered.length !== 1 ? 's' : ''} available`;
+
+      const listEl = document.getElementById('jobsList');
+      if (filtered.length === 0) {
+        listEl.innerHTML = `
+          <div class="no-results">
+            <h3>No positions found</h3>
+            <p>Try adjusting your filters or search term, or ask our chatbot for help finding the right role.</p>
+          </div>`;
+        return;
+      }
+
+      listEl.innerHTML = filtered.map(job => `
+        <div class="job-card" data-id="${job.id}" onclick="toggleCard(this)">
+          <div class="job-card-header">
+            <div>
+              <h3>${job.title}</h3>
+              <div class="business">${job.business}</div>
+            </div>
+          </div>
+          <div class="meta">
+            <span class="badge badge-location">${job.location}</span>
+            <span class="badge badge-type">${job.type}</span>
+            <span class="badge badge-category">${job.category}</span>
+            <span class="badge badge-pay">${job.pay}</span>
+          </div>
+          <div class="description">${job.description}</div>
+          <div class="requirements">
+            <h4>Requirements</h4>
+            <ul>${job.requirements.map(r => `<li>${r}</li>`).join('')}</ul>
+          </div>
+          <div class="apply-btn">
+            <button onclick="event.stopPropagation(); askAboutJob('${job.id}')">Ask About This Job</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function toggleCard(el) {
+      el.classList.toggle('expanded');
+    }
+
+    function askAboutJob(jobId) {
+      const job = jobs.find(j => j.id === jobId);
+      if (!job) return;
+      openChat();
+      const msg = `I'm interested in the ${job.title} position at ${job.business}. Can you tell me more?`;
+      document.getElementById('chatInput').value = msg;
+      sendMessage();
+    }
+
+    // Filters
+    document.getElementById('searchInput').addEventListener('input', renderJobs);
+    document.getElementById('locationFilter').addEventListener('change', renderJobs);
+    document.getElementById('categoryFilter').addEventListener('change', renderJobs);
+    document.getElementById('typeFilter').addEventListener('change', renderJobs);
+
+    // ── Chatbot ──────────────────────────────
+    const chatToggle = document.getElementById('chatToggle');
+    const chatWindow = document.getElementById('chatWindow');
+    const chatInput = document.getElementById('chatInput');
+    const chatSend = document.getElementById('chatSend');
+    const chatMessages = document.getElementById('chatMessages');
+    const resumeUpload = document.getElementById('resumeUpload');
+    const resumeFile = document.getElementById('resumeFile');
+    const fileNameEl = document.getElementById('fileName');
+
+    let chatOpen = false;
+    let conversationHistory = [];
+    let candidateInfo = {};
+
+    function openChat() {
+      chatOpen = true;
+      chatWindow.classList.add('open');
+    }
+
+    chatToggle.addEventListener('click', () => {
+      chatOpen = !chatOpen;
+      chatWindow.classList.toggle('open', chatOpen);
+      if (chatOpen) chatInput.focus();
+    });
+
+    chatInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    chatSend.addEventListener('click', sendMessage);
+
+    resumeFile.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        fileNameEl.textContent = file.name;
+        candidateInfo.resumeFileName = file.name;
+        addMessage('bot', `Resume "${file.name}" attached. I'll include this with your application. Is there anything else you'd like to add?`);
+      }
+    });
+
+    function addMessage(role, text) {
+      const div = document.createElement('div');
+      div.className = `chat-msg ${role}`;
+      div.textContent = text;
+      chatMessages.appendChild(div);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function addTypingIndicator() {
+      const div = document.createElement('div');
+      div.className = 'chat-msg typing';
+      div.id = 'typingIndicator';
+      div.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>';
+      chatMessages.appendChild(div);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function removeTypingIndicator() {
+      const el = document.getElementById('typingIndicator');
+      if (el) el.remove();
+    }
+
+    async function sendMessage() {
+      const text = chatInput.value.trim();
+      if (!text) return;
+
+      addMessage('user', text);
+      chatInput.value = '';
+      chatSend.disabled = true;
+
+      conversationHistory.push({ role: 'user', content: text });
+
+      addTypingIndicator();
+
+      try {
+        const response = await fetch('/.netlify/functions/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message: text,
+            history: conversationHistory.slice(-10),
+            jobs: jobs,
+            candidateInfo: candidateInfo
+          })
+        });
+
+        removeTypingIndicator();
+
+        if (!response.ok) throw new Error('Chat service unavailable');
+
+        const data = await response.json();
+        const reply = data.reply;
+
+        addMessage('bot', reply);
+        conversationHistory.push({ role: 'assistant', content: reply });
+
+        // Show resume upload if the bot is collecting info
+        if (data.collectResume) {
+          resumeUpload.classList.add('active');
+        }
+
+        // Store any candidate info extracted
+        if (data.candidateInfo) {
+          Object.assign(candidateInfo, data.candidateInfo);
+        }
+
+      } catch (err) {
+        removeTypingIndicator();
+        addMessage('bot', 'Sorry, I\'m having trouble connecting right now. You can email us directly at jobs@triangleworkforce.com for help with any position.');
+      }
+
+      chatSend.disabled = false;
+      chatInput.focus();
+    }
+
+    // Init
+    loadJobs();
+  </script>
+</body>
+</html>

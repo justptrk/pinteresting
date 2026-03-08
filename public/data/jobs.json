@@ -1,0 +1,146 @@
+[
+  {
+    "id": "1",
+    "title": "Line Cook",
+    "business": "Mama Dip's Kitchen",
+    "location": "Chapel Hill",
+    "category": "Restaurant",
+    "type": "Full-Time",
+    "pay": "$16 - $20/hr",
+    "description": "Experienced line cook needed for a beloved Southern kitchen. Must be comfortable with high-volume service and have knowledge of Southern cuisine. Team-oriented environment with meals provided during shifts.",
+    "requirements": [
+      "2+ years line cook experience",
+      "Food handler certification preferred",
+      "Ability to work nights and weekends",
+      "Strong teamwork skills"
+    ],
+    "posted": "2026-03-01",
+    "contact": "jobs@triangleworkforce.com"
+  },
+  {
+    "id": "2",
+    "title": "Server / Waitstaff",
+    "business": "Lantern Restaurant",
+    "location": "Chapel Hill",
+    "category": "Restaurant",
+    "type": "Part-Time",
+    "pay": "$5.50/hr + tips (avg $20-30/hr)",
+    "description": "Upscale Asian-inspired restaurant seeking experienced servers. Wine knowledge a plus. Fast-paced, detail-oriented environment with excellent tip potential.",
+    "requirements": [
+      "1+ year serving experience",
+      "Wine and cocktail knowledge preferred",
+      "Professional appearance and demeanor",
+      "Available evenings and weekends"
+    ],
+    "posted": "2026-03-03",
+    "contact": "jobs@triangleworkforce.com"
+  },
+  {
+    "id": "3",
+    "title": "Barista",
+    "business": "Open Eye Cafe",
+    "location": "Carrboro",
+    "category": "Restaurant",
+    "type": "Part-Time",
+    "pay": "$14 - $16/hr + tips",
+    "description": "Carrboro's favorite coffee shop is looking for a friendly, skilled barista. We value community, great coffee, and a welcoming atmosphere. Training provided on our specific menu.",
+    "requirements": [
+      "Customer service experience",
+      "Barista experience preferred but not required",
+      "Morning availability required",
+      "Positive, community-minded attitude"
+    ],
+    "posted": "2026-03-05",
+    "contact": "jobs@triangleworkforce.com"
+  },
+  {
+    "id": "4",
+    "title": "Retail Associate",
+    "business": "Flyleaf Books",
+    "location": "Chapel Hill",
+    "category": "Retail",
+    "type": "Part-Time",
+    "pay": "$14 - $15/hr",
+    "description": "Independent bookstore seeking a book-loving retail associate. Help customers find their next great read, process sales, and assist with author events.",
+    "requirements": [
+      "Love of books and reading",
+      "Retail or customer service experience",
+      "Comfortable with POS systems",
+      "Weekend availability"
+    ],
+    "posted": "2026-03-02",
+    "contact": "jobs@triangleworkforce.com"
+  },
+  {
+    "id": "5",
+    "title": "Dishwasher / Kitchen Support",
+    "business": "Neal's Deli",
+    "location": "Carrboro",
+    "category": "Restaurant",
+    "type": "Full-Time",
+    "pay": "$14 - $15/hr",
+    "description": "Popular Carrboro deli looking for reliable kitchen support. Great entry point into the restaurant industry. We offer a fun work environment and meals during shifts.",
+    "requirements": [
+      "Reliability and punctuality",
+      "Ability to stand for extended periods",
+      "No experience necessary — will train",
+      "Positive attitude"
+    ],
+    "posted": "2026-03-06",
+    "contact": "jobs@triangleworkforce.com"
+  },
+  {
+    "id": "6",
+    "title": "Assistant Manager",
+    "business": "Weaver Street Market",
+    "location": "Carrboro",
+    "category": "Retail",
+    "type": "Full-Time",
+    "pay": "$18 - $22/hr",
+    "description": "Community-owned grocery cooperative seeking an assistant manager. Help oversee daily operations, manage staff, and maintain our commitment to local and organic products.",
+    "requirements": [
+      "2+ years retail management experience",
+      "Knowledge of natural/organic products a plus",
+      "Strong leadership and communication skills",
+      "Flexible schedule including weekends"
+    ],
+    "posted": "2026-03-04",
+    "contact": "jobs@triangleworkforce.com"
+  },
+  {
+    "id": "7",
+    "title": "Host / Hostess",
+    "business": "Al's Burger Shack",
+    "location": "Chapel Hill",
+    "category": "Restaurant",
+    "type": "Part-Time",
+    "pay": "$13 - $14/hr + tips",
+    "description": "Award-winning burger spot needs a friendly host to manage the front of house. Fast-paced environment, great team, and you get to be part of one of Chapel Hill's most popular restaurants.",
+    "requirements": [
+      "Friendly, outgoing personality",
+      "Ability to handle a busy environment",
+      "Available lunch and dinner shifts",
+      "No experience needed — will train"
+    ],
+    "posted": "2026-03-07",
+    "contact": "jobs@triangleworkforce.com"
+  },
+  {
+    "id": "8",
+    "title": "Bartender",
+    "business": "Steel String Brewery",
+    "location": "Carrboro",
+    "category": "Restaurant",
+    "type": "Part-Time",
+    "pay": "$10/hr + tips (avg $25-35/hr)",
+    "description": "Local craft brewery seeking a knowledgeable and personable bartender. Must be passionate about craft beer and creating a great taproom experience.",
+    "requirements": [
+      "21+ years old",
+      "Bartending experience required",
+      "Craft beer knowledge strongly preferred",
+      "Available evenings and weekends"
+    ],
+    "posted": "2026-03-06",
+    "contact": "jobs@triangleworkforce.com"
+  }
+]
