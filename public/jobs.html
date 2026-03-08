@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Local Jobs | Triangle WorkForce — Chapel Hill &amp; Carrboro</title>
+  <meta name="description" content="Browse open positions at restaurants and businesses in Chapel Hill and Carrboro, NC. Powered by Triangle Workforce." />
+  <meta property="og:title" content="Local Jobs | Triangle WorkForce — Chapel Hill & Carrboro" />
+  <meta property="og:description" content="Browse open positions at restaurants and businesses in Chapel Hill and Carrboro, NC. Powered by Triangle Workforce." />
+  <link rel="canonical" href="https://triangleworkforce.com/jobs" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-primary: #060F1C;
+      --bg-secondary: #0A1728;
+      --bg-card: rgba(255,255,255,0.04);
+      --blue: #2B78E4;
+      --blue-glow: #4FA8FF;
+      --green: #41B241;
+      --orange: #F47820;
+      --text: #E8F0FF;
+      --muted: #7A96BB;
+      --border: rgba(255,255,255,0.08);
+    }
+    *,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { font-family:'Inter',sans-serif; background:var(--bg-primary); color:var(--text); overflow-x:hidden; }
+
+    /* ── NAV ─────────────────────────────── */
+    nav { position:fixed; top:0; left:0; right:0; z-index:1000; padding:1rem 2.5rem; display:flex; align-items:center; justify-content:space-between; background:rgba(6,15,28,0.97); backdrop-filter:blur(22px); border-bottom:1px solid var(--border); transition:background .3s; }
+    .logo { display:flex; align-items:center; gap:.75rem; text-decoration:none; }
+    .logo svg { width:38px; height:36px; }
+    .logo-text { display:flex; flex-direction:column; line-height:1.1; }
+    .logo-text .t1 { font-family:'Orbitron',sans-serif; font-size:.8rem; font-weight:700; color:var(--text); letter-spacing:.04em; }
+    .logo-text .t2 { font-family:'Orbitron',sans-serif; font-size:.8rem; font-weight:600; color:var(--blue-glow); letter-spacing:.04em; }
+    .nav-links { display:flex; align-items:center; gap:2rem; list-style:none; }
+    .nav-links a { color:var(--muted); text-decoration:none; font-size:.9rem; font-weight:500; transition:color .25s; }
+    .nav-links a:hover { color:var(--text); }
+    .nav-links a.active { color:var(--text); }
+    .nav-cta { background:linear-gradient(135deg,var(--blue),#1a5cbf); color:#fff !important; padding:.55rem 1.4rem; border-radius:8px; font-weight:600 !important; box-shadow:0 0 20px rgba(43,120,228,.3); transition:all .3s !important; }
+    .nav-cta:hover { transform:translateY(-2px); box-shadow:0 0 35px rgba(43,120,228,.5) !important; }
+
+    /* ── SHARED ──────────────────────────── */
+    section { padding:7rem 2.5rem; }
+    .container { max-width:1140px; margin:0 auto; }
+    .section-label { display:inline-flex; align-items:center; gap:.5rem; background:rgba(43,120,228,.12); border:1px solid rgba(43,120,228,.25); border-radius:50px; padding:.35rem 1rem; font-size:.78rem; font-weight:600; color:var(--blue-glow); letter-spacing:.06em; text-transform:uppercase; margin-bottom:1.5rem; }
+    .section-label::before { content:''; width:6px; height:6px; border-radius:50%; background:var(--blue-glow); }
+    .section-title { font-family:'Orbitron',sans-serif; font-size:clamp(1.8rem,3.5vw,2.8rem); font-weight:700; line-height:1.2; margin-bottom:1.2rem; }
+    .section-sub { color:var(--muted); font-size:1.05rem; line-height:1.75; max-width:600px; }
+    .fade-in { opacity:0; transform:translateY(28px); transition:opacity .6s ease, transform .6s ease; }
+    .fade-in.visible { opacity:1; transform:none; }
+
+    /* ── HERO BANNER ─────────────────────── */
+    .jobs-hero {
+      padding-top: 8rem;
+      padding-bottom: 4rem;
+      background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(43,120,228,.12) 0%, transparent 70%), var(--bg-primary);
+      text-align: center;
+    }
+    .jobs-hero .section-title { font-size: clamp(2rem,4vw,3.2rem); }
+    .jobs-hero .section-sub { margin: 0 auto; max-width: 640px; }
+
+    /* ── FILTERS ─────────────────────────── */
+    .filters-section { background: var(--bg-secondary); padding: 2rem 2.5rem; border-bottom: 1px solid var(--border); }
+    .filters-bar {
+      max-width: 1140px;
+      margin: 0 auto;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .filters-bar input[type="text"] {
+      flex: 1;
+      min-width: 220px;
+      padding: .75rem 1.1rem;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: .93rem;
+      font-family: 'Inter',sans-serif;
+      outline: none;
+      transition: border-color .3s;
+    }
+    .filters-bar input[type="text"]:focus { border-color: var(--blue); }
+    .filters-bar input::placeholder { color: var(--muted); }
+    .filters-bar select {
+      padding: .75rem 1.1rem;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: .93rem;
+      font-family: 'Inter',sans-serif;
+      cursor: pointer;
+      outline: none;
+      transition: border-color .3s;
+    }
+    .filters-bar select:focus { border-color: var(--blue); }
+    .filters-bar select option { background: #0A1728; }
+
+    /* ── JOBS LIST ────────────────────────── */
+    .jobs-section { background: var(--bg-primary); }
+    .jobs-count {
+      font-size: .88rem;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+      font-weight: 500;
+    }
+    .job-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 1.2rem;
+      transition: all .35s;
+      backdrop-filter: blur(10px);
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .job-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--blue), var(--blue-glow));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform .35s;
+    }
+    .job-card:hover {
+      border-color: rgba(43,120,228,.35);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 60px rgba(0,0,0,.4);
+    }
+    .job-card:hover::before { transform: scaleX(1); }
+    .job-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap; }
+    .job-card h3 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .job-card .business {
+      font-weight: 500;
+      color: var(--blue-glow);
+      font-size: .92rem;
+      margin-top: .2rem;
+    }
+    .job-card .meta {
+      display: flex;
+      gap: .5rem;
+      flex-wrap: wrap;
+      margin-top: .75rem;
+    }
+    .badge {
+      display: inline-block;
+      padding: .25rem .7rem;
+      border-radius: 50px;
+      font-size: .73rem;
+      font-weight: 600;
+      border: 1px solid;
+    }
+    .badge-location { background: rgba(43,120,228,.1); color: var(--blue-glow); border-color: rgba(43,120,228,.25); }
+    .badge-type { background: rgba(244,120,32,.1); color: var(--orange); border-color: rgba(244,120,32,.25); }
+    .badge-category { background: rgba(65,178,65,.1); color: var(--green); border-color: rgba(65,178,65,.25); }
+    .badge-pay { background: rgba(255,255,255,.05); color: var(--muted); border-color: rgba(255,255,255,.1); }
+
+    .job-details { display: none; margin-top: 1.2rem; padding-top: 1.2rem; border-top: 1px solid var(--border); }
+    .job-card.expanded .job-details { display: block; }
+    .job-details .description { color: var(--muted); font-size: .93rem; line-height: 1.75; margin-bottom: 1rem; }
+    .job-details h4 { font-size: .85rem; font-weight: 600; margin-bottom: .6rem; color: var(--text); }
+    .job-details ul { list-style: none; padding: 0; margin-bottom: 1.5rem; }
+    .job-details li {
+      font-size: .88rem;
+      color: var(--muted);
+      padding: .25rem 0;
+      padding-left: 1.4rem;
+      position: relative;
+    }
+    .job-details li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--blue-glow);
+      font-weight: bold;
+    }
+    .ask-btn {
+      background: linear-gradient(135deg, var(--blue), #1a5cbf);
+      color: #fff;
+      border: none;
+      padding: .7rem 1.8rem;
+      border-radius: 8px;
+      font-size: .93rem;
+      font-weight: 600;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(43,120,228,.3);
+      transition: all .3s;
+    }
+    .ask-btn:hover { transform: translateY(-2px); box-shadow: 0 0 40px rgba(43,120,228,.5); }
+
+    .no-results { text-align: center; padding: 4rem 1rem; }
+    .no-results h3 { font-family: 'Orbitron', sans-serif; margin-bottom: .5rem; font-size: 1.2rem; }
+    .no-results p { color: var(--muted); }
+
+    /* ── CHATBOT ──────────────────────────── */
+    .chat-toggle {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      width: 62px;
+      height: 62px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--blue), #1a5cbf);
+      color: white;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 24px rgba(43,120,228,.4);
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      transition: all .3s;
+    }
+    .chat-toggle:hover { transform: scale(1.08); box-shadow: 0 4px 40px rgba(43,120,228,.6); }
+    .chat-pulse {
+      position: absolute;
+      width: 62px; height: 62px;
+      border-radius: 50%;
+      border: 2px solid var(--blue-glow);
+      animation: chatPulse 2s infinite;
+    }
+    @keyframes chatPulse {
+      0% { transform: scale(1); opacity: .6; }
+      100% { transform: scale(1.5); opacity: 0; }
+    }
+
+    .chat-window {
+      position: fixed;
+      bottom: 5.5rem;
+      right: 1.5rem;
+      width: 400px;
+      max-height: 550px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      display: none;
+      flex-direction: column;
+      z-index: 999;
+      overflow: hidden;
+      box-shadow: 0 12px 48px rgba(0,0,0,.5);
+    }
+    .chat-window.open { display: flex; }
+    .chat-head {
+      background: linear-gradient(135deg, var(--blue), #1a5cbf);
+      padding: 1.1rem 1.4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .chat-head-info h3 { font-family: 'Orbitron', sans-serif; font-size: .88rem; font-weight: 700; }
+    .chat-head-info .status { font-size: .72rem; opacity: .8; display: flex; align-items: center; gap: .35rem; margin-top: .2rem; }
+    .chat-head-info .status-dot { width: 7px; height: 7px; background: #2ecc71; border-radius: 50%; }
+    .chat-close { background:none; border:none; color:white; font-size:1.3rem; cursor:pointer; padding:.2rem; opacity:.7; transition:opacity .2s; }
+    .chat-close:hover { opacity:1; }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.2rem;
+      max-height: 350px;
+      display: flex;
+      flex-direction: column;
+      gap: .75rem;
+    }
+    .chat-messages::-webkit-scrollbar { width: 4px; }
+    .chat-messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 4px; }
+    .chat-msg {
+      max-width: 85%;
+      padding: .75rem 1rem;
+      border-radius: 12px;
+      font-size: .88rem;
+      line-height: 1.55;
+      word-wrap: break-word;
+    }
+    .chat-msg.bot {
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      align-self: flex-start;
+      border-bottom-left-radius: 4px;
+      border: 1px solid var(--border);
+    }
+    .chat-msg.user {
+      background: linear-gradient(135deg, var(--blue), #1a5cbf);
+      color: white;
+      align-self: flex-end;
+      border-bottom-right-radius: 4px;
+    }
+    .chat-msg.typing { background: rgba(255,255,255,.06); align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid var(--border); }
+    .typing-dots { display: flex; gap: 5px; padding: .2rem 0; }
+    .typing-dots span {
+      width: 7px; height: 7px;
+      background: var(--blue-glow);
+      border-radius: 50%;
+      animation: typingBounce 1.4s infinite ease-in-out;
+    }
+    .typing-dots span:nth-child(2) { animation-delay: .2s; }
+    .typing-dots span:nth-child(3) { animation-delay: .4s; }
+    @keyframes typingBounce {
+      0%,80%,100% { transform: scale(.6); opacity:.3; }
+      40% { transform: scale(1); opacity:1; }
+    }
+
+    .resume-upload { border-top: 1px solid var(--border); padding: .6rem .9rem; background: rgba(255,255,255,.02); display: none; }
+    .resume-upload.active { display: block; }
+    .resume-upload label {
+      display: flex; align-items: center; gap: .5rem; cursor: pointer;
+      font-size: .8rem; color: var(--blue-glow); font-weight: 600;
+      padding: .45rem .7rem; border: 1px dashed rgba(43,120,228,.4);
+      border-radius: 8px; justify-content: center; transition: background .2s;
+    }
+    .resume-upload label:hover { background: rgba(43,120,228,.08); }
+    .resume-upload input[type="file"] { display: none; }
+    .resume-upload .file-name { font-size: .78rem; color: var(--muted); margin-top: .3rem; text-align: center; }
+
+    .chat-input-area {
+      border-top: 1px solid var(--border);
+      padding: .75rem;
+      display: flex;
+      gap: .5rem;
+    }
+    .chat-input-area input {
+      flex: 1;
+      padding: .65rem 1rem;
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      color: var(--text);
+      font-size: .88rem;
+      font-family: 'Inter',sans-serif;
+      outline: none;
+      transition: border-color .3s;
+    }
+    .chat-input-area input:focus { border-color: var(--blue); }
+    .chat-input-area input::placeholder { color: var(--muted); }
+    .chat-input-area button {
+      background: linear-gradient(135deg, var(--blue), #1a5cbf);
+      color: white;
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all .3s;
+      flex-shrink: 0;
+    }
+    .chat-input-area button:hover { box-shadow: 0 0 20px rgba(43,120,228,.4); }
+    .chat-input-area button:disabled { opacity: .4; cursor: not-allowed; }
+
+    /* ── FOOTER ──────────────────────────── */
+    footer { background:var(--bg-primary); border-top:1px solid var(--border); padding:2.5rem 2.5rem; text-align:center; }
+    .footer-inner { max-width:1140px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; }
+    .footer-logo { display:flex; align-items:center; gap:.6rem; text-decoration:none; }
+    .footer-logo svg { width:26px; height:24px; }
+    .footer-copyright { color:var(--muted); font-size:.82rem; }
+    .footer-nav { display:flex; gap:1.8rem; list-style:none; }
+    .footer-nav a { color:var(--muted); text-decoration:none; font-size:.85rem; transition:color .25s; }
+    .footer-nav a:hover { color:var(--text); }
+
+    /* ── RESPONSIVE ──────────────────────── */
+    @media(max-width:600px) {
+      nav { padding:1rem 1.2rem; }
+      section { padding:5rem 1.2rem; }
+      .filters-section { padding: 1.5rem 1.2rem; }
+      .filters-bar { flex-direction: column; }
+      .filters-bar input, .filters-bar select { width: 100%; }
+      .chat-window { width: calc(100% - 1.5rem); right: .75rem; bottom: 5rem; max-height: 65vh; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav id="main-nav">
+    <a class="logo" href="/">
+      <svg viewBox="0 0 200 185" xmlns="http://www.w3.org/2000/svg" fill="none">
+        <path d="M108,90 C120,62 150,32 178,18 C190,12 195,24 185,42 C165,76 135,90 110,98 Z" fill="#2B68C4"/>
+        <path d="M88,80 C68,70 36,58 12,34 C2,22 10,8 26,16 C58,32 82,64 94,86 Z" fill="#41B241"/>
+        <path d="M100,104 C108,132 114,162 104,180 C97,192 82,190 77,176 C68,156 84,126 98,106 Z" fill="#F47820"/>
+      </svg>
+      <div class="logo-text"><span class="t1">Triangle</span><span class="t2">Workforce</span></div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="/services">Services</a></li>
+      <li><a href="/jobs" class="active">Jobs</a></li>
+      <li><a href="/about">About</a></li>
+      <li><a href="/#contact">Contact</a></li>
+      <li><a href="/#contact" class="nav-cta">Connect With Us</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO BANNER -->
+  <section class="jobs-hero">
+    <div class="container fade-in">
+      <div class="section-label">Local Opportunities</div>
+      <h2 class="section-title">Chapel Hill &amp; Carrboro Jobs</h2>
+      <p class="section-sub">Browse open positions at local restaurants and businesses. Find your next opportunity — or chat with our AI assistant for personalized help.</p>
+    </div>
+  </section>
+
+  <!-- FILTERS -->
+  <div class="filters-section">
+    <div class="filters-bar">
+      <input type="text" id="searchInput" placeholder="Search jobs, businesses, keywords...">
+      <select id="locationFilter">
+        <option value="">All Locations</option>
+        <option value="Chapel Hill">Chapel Hill</option>
+        <option value="Carrboro">Carrboro</option>
+      </select>
+      <select id="categoryFilter">
+        <option value="">All Categories</option>
+        <option value="Restaurant">Restaurant</option>
+        <option value="Retail">Retail</option>
+      </select>
+      <select id="typeFilter">
+        <option value="">All Types</option>
+        <option value="Full-Time">Full-Time</option>
+        <option value="Part-Time">Part-Time</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- JOBS LIST -->
+  <section class="jobs-section">
+    <div class="container">
+      <div class="jobs-count" id="jobsCount"></div>
+      <div id="jobsList"></div>
+    </div>
+  </section>
+
+  <!-- CHAT TOGGLE -->
+  <button class="chat-toggle" id="chatToggle" title="Chat with our job assistant">
+    <div class="chat-pulse"></div>
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+    </svg>
+  </button>
+
+  <!-- CHAT WINDOW -->
+  <div class="chat-window" id="chatWindow">
+    <div class="chat-head">
+      <div class="chat-head-info">
+        <h3>TW Job Assistant</h3>
+        <div class="status"><span class="status-dot"></span> Online</div>
+      </div>
+      <button class="chat-close" id="chatClose">&times;</button>
+    </div>
+    <div class="chat-messages" id="chatMessages">
+      <div class="chat-msg bot">
+        Hey! I'm the Triangle Workforce job assistant. I can help you find positions in Chapel Hill and Carrboro, answer questions about open roles, or help you submit your info. What are you looking for?
+      </div>
+    </div>
+    <div class="resume-upload" id="resumeUpload">
+      <label>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Attach Resume (PDF, DOC, DOCX)
+        <input type="file" id="resumeFile" accept=".pdf,.doc,.docx">
+      </label>
+      <div class="file-name" id="fileName"></div>
+    </div>
+    <div class="chat-input-area">
+      <input type="text" id="chatInput" placeholder="Ask about jobs..." autocomplete="off">
+      <button id="chatSend" title="Send">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <a class="footer-logo" href="/">
+        <svg viewBox="0 0 200 185" xmlns="http://www.w3.org/2000/svg" fill="none">
+          <path d="M108,90 C120,62 150,32 178,18 C190,12 195,24 185,42 C165,76 135,90 110,98 Z" fill="#2B68C4"/>
+          <path d="M88,80 C68,70 36,58 12,34 C2,22 10,8 26,16 C58,32 82,64 94,86 Z" fill="#41B241"/>
+          <path d="M100,104 C108,132 114,162 104,180 C97,192 82,190 77,176 C68,156 84,126 98,106 Z" fill="#F47820"/>
+        </svg>
+        <div class="logo-text"><span class="t1">Triangle</span><span class="t2">Workforce</span></div>
+      </a>
+      <span class="footer-copyright">&copy; 2026 Triangle Workforce. All rights reserved.</span>
+      <ul class="footer-nav">
+        <li><a href="/services">Services</a></li>
+        <li><a href="/jobs">Jobs</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/#contact">Contact</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script>
+    // ── Jobs Data & Rendering ──────────────────
+    let jobs = [];
+
+    async function loadJobs() {
+      try {
+        const resp = await fetch('/data/jobs.json');
+        jobs = await resp.json();
+      } catch (e) {
+        console.error('Could not load jobs data:', e);
+        jobs = [];
+      }
+      renderJobs();
+    }
+
+    function renderJobs() {
+      const search = document.getElementById('searchInput').value.toLowerCase();
+      const loc = document.getElementById('locationFilter').value;
+      const cat = document.getElementById('categoryFilter').value;
+      const type = document.getElementById('typeFilter').value;
+
+      const filtered = jobs.filter(job => {
+        if (loc && job.location !== loc) return false;
+        if (cat && job.category !== cat) return false;
+        if (type && job.type !== type) return false;
+        if (search) {
+          const haystack = `${job.title} ${job.business} ${job.description} ${job.location} ${job.category}`.toLowerCase();
+          if (!haystack.includes(search)) return false;
+        }
+        return true;
+      });
+
+      document.getElementById('jobsCount').textContent = `${filtered.length} position${filtered.length !== 1 ? 's' : ''} available`;
+
+      const listEl = document.getElementById('jobsList');
+      if (filtered.length === 0) {
+        listEl.innerHTML = '<div class="no-results"><h3>No positions found</h3><p>Try adjusting your filters or ask our chatbot for help finding the right role.</p></div>';
+        return;
+      }
+
+      listEl.innerHTML = filtered.map(job => `
+        <div class="job-card fade-in visible" data-id="${job.id}" onclick="toggleCard(this)">
+          <div class="job-card-top">
+            <div>
+              <h3>${job.title}</h3>
+              <div class="business">${job.business}</div>
+            </div>
+          </div>
+          <div class="meta">
+            <span class="badge badge-location">${job.location}</span>
+            <span class="badge badge-type">${job.type}</span>
+            <span class="badge badge-category">${job.category}</span>
+            <span class="badge badge-pay">${job.pay}</span>
+          </div>
+          <div class="job-details">
+            <p class="description">${job.description}</p>
+            <h4>Requirements</h4>
+            <ul>${job.requirements.map(r => `<li>${r}</li>`).join('')}</ul>
+            <button class="ask-btn" onclick="event.stopPropagation(); askAboutJob('${job.id}')">Chat About This Role →</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function toggleCard(el) { el.classList.toggle('expanded'); }
+
+    function askAboutJob(jobId) {
+      const job = jobs.find(j => j.id === jobId);
+      if (!job) return;
+      openChat();
+      document.getElementById('chatInput').value = `I'm interested in the ${job.title} position at ${job.business}. Can you tell me more?`;
+      sendMessage();
+    }
+
+    document.getElementById('searchInput').addEventListener('input', renderJobs);
+    document.getElementById('locationFilter').addEventListener('change', renderJobs);
+    document.getElementById('categoryFilter').addEventListener('change', renderJobs);
+    document.getElementById('typeFilter').addEventListener('change', renderJobs);
+
+    // ── Chatbot ──────────────────────────────
+    const chatToggle = document.getElementById('chatToggle');
+    const chatWindow = document.getElementById('chatWindow');
+    const chatInput = document.getElementById('chatInput');
+    const chatSend = document.getElementById('chatSend');
+    const chatClose = document.getElementById('chatClose');
+    const chatMessages = document.getElementById('chatMessages');
+    const resumeUpload = document.getElementById('resumeUpload');
+    const resumeFile = document.getElementById('resumeFile');
+    const fileNameEl = document.getElementById('fileName');
+
+    let chatOpen = false;
+    let conversationHistory = [];
+    let candidateInfo = {};
+
+    function openChat() {
+      chatOpen = true;
+      chatWindow.classList.add('open');
+    }
+
+    chatToggle.addEventListener('click', () => {
+      chatOpen = !chatOpen;
+      chatWindow.classList.toggle('open', chatOpen);
+      if (chatOpen) chatInput.focus();
+    });
+
+    chatClose.addEventListener('click', () => {
+      chatOpen = false;
+      chatWindow.classList.remove('open');
+    });
+
+    chatInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+    });
+
+    chatSend.addEventListener('click', sendMessage);
+
+    resumeFile.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        fileNameEl.textContent = file.name;
+        candidateInfo.resumeFileName = file.name;
+        addMessage('bot', `Resume "${file.name}" attached! I'll include this with your application. Anything else you'd like to add?`);
+      }
+    });
+
+    function addMessage(role, text) {
+      const div = document.createElement('div');
+      div.className = `chat-msg ${role}`;
+      div.textContent = text;
+      chatMessages.appendChild(div);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function addTypingIndicator() {
+      const div = document.createElement('div');
+      div.className = 'chat-msg typing';
+      div.id = 'typingIndicator';
+      div.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>';
+      chatMessages.appendChild(div);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function removeTypingIndicator() {
+      const el = document.getElementById('typingIndicator');
+      if (el) el.remove();
+    }
+
+    async function sendMessage() {
+      const text = chatInput.value.trim();
+      if (!text) return;
+
+      addMessage('user', text);
+      chatInput.value = '';
+      chatSend.disabled = true;
+      conversationHistory.push({ role: 'user', content: text });
+      addTypingIndicator();
+
+      try {
+        const response = await fetch('/.netlify/functions/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message: text,
+            history: conversationHistory.slice(-10),
+            jobs: jobs,
+            candidateInfo: candidateInfo
+          })
+        });
+
+        removeTypingIndicator();
+        if (!response.ok) throw new Error('Chat service unavailable');
+
+        const data = await response.json();
+        addMessage('bot', data.reply);
+        conversationHistory.push({ role: 'assistant', content: data.reply });
+
+        if (data.collectResume) resumeUpload.classList.add('active');
+        if (data.candidateInfo) Object.assign(candidateInfo, data.candidateInfo);
+
+      } catch (err) {
+        removeTypingIndicator();
+        addMessage('bot', "Sorry, I'm having trouble connecting right now. You can email us directly at connect@triangleworkforce.com for help with any position.");
+      }
+
+      chatSend.disabled = false;
+      chatInput.focus();
+    }
+
+    // Scroll fade-in
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach((e,i) => {
+        if (e.isIntersecting) setTimeout(() => e.target.classList.add('visible'), i * 80);
+      });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+
+    // Init
+    loadJobs();
+  </script>
+</body>
+</html>
