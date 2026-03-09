@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Street Hustle</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0a0f;--panel:#12121a;--border:#2a2a3a;--text:#c8c8d8;
+  --dim:#666680;--accent:#00e5ff;--green:#00ff88;--red:#ff4466;
+  --yellow:#ffcc00;--purple:#b388ff;--orange:#ff9100;
+}
+body{background:var(--bg);color:var(--text);font-family:'Courier New',monospace;
+  min-height:100vh;display:flex;flex-direction:column;align-items:center}
+#game{max-width:900px;width:100%;padding:12px}
+
+/* Header */
+.header{text-align:center;padding:16px 0;border-bottom:1px solid var(--border);margin-bottom:12px}
+.header h1{font-size:1.6em;color:var(--accent);letter-spacing:4px}
+.header .sub{color:var(--dim);font-size:.75em;margin-top:4px}
+
+/* Status bar */
+.status-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  gap:8px;padding:10px;background:var(--panel);border:1px solid var(--border);
+  border-radius:6px;margin-bottom:12px;font-size:.85em}
+.stat{display:flex;flex-direction:column;align-items:center}
+.stat-label{color:var(--dim);font-size:.7em;text-transform:uppercase;letter-spacing:1px}
+.stat-value{font-size:1.1em;font-weight:bold;margin-top:2px}
+.stat-value.cash{color:var(--green)}
+.stat-value.debt{color:var(--red)}
+.stat-value.rep{color:var(--purple)}
+.stat-value.day{color:var(--yellow)}
+.stat-value.health{color:var(--accent)}
+
+/* Market table */
+.market{width:100%;border-collapse:collapse;margin:12px 0;font-size:.85em}
+.market th{color:var(--dim);text-transform:uppercase;font-size:.7em;letter-spacing:1px;
+  padding:6px 8px;border-bottom:1px solid var(--border);text-align:left}
+.market td{padding:6px 8px;border-bottom:1px solid #1a1a2a}
+.market tr:hover{background:#1a1a2a}
+.market .price{color:var(--green);text-align:right}
+.market .qty{text-align:center}
+.market .drug-name{color:var(--accent)}
+.market .actions{text-align:right}
+.market .btn-sm{padding:6px 16px;margin-left:4px;font-size:.85em;border-radius:4px;
+  border:1px solid var(--border);background:var(--panel);color:var(--text);cursor:pointer;
+  font-family:inherit;font-weight:bold;transition:all .15s}
+.market .btn-sm:hover{border-color:var(--accent);color:var(--accent);background:#1a1a2a}
+.market .btn-sm.sell{color:var(--green);border-color:#004d2e}
+.market .btn-sm.sell:hover{border-color:var(--green)}
+
+/* Buttons */
+.actions-bar{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0;justify-content:center}
+.btn{padding:10px 22px;border:1px solid var(--border);background:var(--panel);
+  color:var(--text);font-family:inherit;font-size:.9em;border-radius:4px;cursor:pointer;
+  transition:all .15s;font-weight:bold}
+.btn:hover{border-color:var(--accent);color:var(--accent);background:#1a1a2a}
+.btn.primary{border-color:var(--accent);color:var(--accent);background:#0a1a20}
+.btn.danger{border-color:var(--red);color:var(--red)}
+.btn:disabled{opacity:.3;cursor:default;border-color:var(--border);color:var(--dim)}
+.hint{text-align:center;color:var(--dim);font-size:.75em;padding:6px;margin:4px 0;
+  border:1px dashed var(--border);border-radius:4px}
+
+/* Travel panel */
+.travel-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin:12px 0}
+.city-btn{padding:10px;border:1px solid var(--border);background:var(--panel);
+  border-radius:4px;cursor:pointer;text-align:left;font-family:inherit;color:var(--text)}
+.city-btn:hover{border-color:var(--accent);background:#1a1a2a}
+.city-btn.current{border-color:var(--yellow);color:var(--yellow);cursor:default}
+.city-btn .city-name{font-size:.9em;font-weight:bold}
+.city-btn .city-risk{font-size:.7em;color:var(--dim);margin-top:2px}
+
+/* Supplier panel */
+.supplier-list{display:flex;flex-direction:column;gap:8px;margin:12px 0}
+.supplier-card{padding:12px;border:1px solid var(--border);background:var(--panel);
+  border-radius:6px;cursor:pointer;transition:all .15s}
+.supplier-card:hover{border-color:var(--purple);background:#1a1a2a}
+.supplier-card.locked{opacity:.4;cursor:default}
+.supplier-card.locked:hover{border-color:var(--border);background:var(--panel)}
+.supplier-name{font-weight:bold;color:var(--purple);font-size:.9em}
+.supplier-tag{color:var(--dim);font-size:.7em;font-style:italic}
+.supplier-info{font-size:.75em;color:var(--dim);margin-top:4px}
+.supplier-products{font-size:.8em;margin-top:4px}
+
+/* Wholesale deal */
+.deal-product{padding:8px;border:1px solid var(--border);background:#1a1a2a;
+  border-radius:4px;margin:4px 0;cursor:pointer;font-size:.85em}
+.deal-product:hover{border-color:var(--green)}
+.deal-product .savings{color:var(--green);font-size:.75em}
+
+/* Log / events */
+.log{background:var(--panel);border:1px solid var(--border);border-radius:6px;
+  padding:12px;margin:12px 0;max-height:300px;overflow-y:auto;font-size:.8em;line-height:1.6}
+.log-entry{padding:2px 0;border-bottom:1px solid #1a1a2a}
+.log-entry.event{color:var(--yellow)}
+.log-entry.danger{color:var(--red)}
+.log-entry.success{color:var(--green)}
+.log-entry.info{color:var(--dim)}
+.log-entry.alien{color:var(--purple)}
+
+/* Modal */
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);
+  display:flex;align-items:center;justify-content:center;z-index:100}
+.modal{background:var(--panel);border:1px solid var(--border);border-radius:8px;
+  padding:24px;max-width:420px;width:90%;text-align:center}
+.modal h3{color:var(--accent);margin-bottom:12px}
+.modal input{width:80%;padding:8px;background:var(--bg);border:1px solid var(--border);
+  color:var(--text);font-family:inherit;font-size:1em;border-radius:4px;text-align:center;
+  margin:8px 0}
+.modal input:focus{outline:none;border-color:var(--accent)}
+.modal .modal-btns{display:flex;gap:8px;justify-content:center;margin-top:12px}
+.modal .info{color:var(--dim);font-size:.8em;margin:6px 0}
+
+/* Title screen */
+.title-screen{text-align:center;padding:40px 20px}
+.title-screen pre{color:var(--accent);font-size:.55em;line-height:1.2;display:inline-block;text-align:left}
+.title-screen .suppliers-list{color:var(--dim);font-size:.8em;margin:12px 0}
+.title-screen .start-info{color:var(--text);margin:20px 0;font-size:.9em;line-height:1.8}
+.start-btn{font-size:1.4em!important;padding:16px 60px!important;animation:pulse 2s infinite;
+  border:2px solid var(--accent)!important;text-transform:uppercase;letter-spacing:3px;
+  margin-top:30px!important;display:inline-block}
+@keyframes pulse{0%,100%{box-shadow:0 0 5px var(--accent)}50%{box-shadow:0 0 25px var(--accent),0 0 50px rgba(0,229,255,.3)}}
+
+/* Game over */
+.game-over{text-align:center;padding:40px 20px}
+.game-over h2{color:var(--red);font-size:1.8em;letter-spacing:6px;margin-bottom:20px}
+.game-over .final-stats{text-align:left;display:inline-block;font-size:.9em;line-height:2}
+.game-over .net-worth{font-size:1.4em;font-weight:bold;margin:16px 0}
+.game-over .rank{color:var(--yellow);font-size:1.1em;margin:12px 0}
+
+/* Panels */
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:12px;margin:12px 0}
+.panel-title{color:var(--dim);text-transform:uppercase;font-size:.7em;letter-spacing:2px;margin-bottom:8px}
+
+/* Responsive */
+@media(max-width:600px){
+  .status-bar{grid-template-columns:repeat(3,1fr);font-size:.75em}
+  .market{font-size:.75em}
+  #game{padding:8px}
+  .title-screen pre{font-size:.35em}
+}
+</style>
+</head>
+<body>
+<div id="game"></div>
+
+<script>
+const DRUGS = {
+  Weed:    { min:300,   max:900 },
+  Shrooms: { min:500,   max:1400 },
+  Molly:   { min:1200,  max:3500 },
+  Coke:    { min:15000, max:40000 },
+  Heroin:  { min:5000,  max:18000 },
+  Meth:    { min:800,   max:3000 },
+  Acid:    { min:400,   max:1800 },
+  Fent:    { min:20000, max:65000 },
+  Nyborg:  { min:50000, max:150000 },
+};
+const DRUG_NAMES = Object.keys(DRUGS);
+
+const CITIES = [
+  { name:"Downtown",    risk:0.20 },
+  { name:"Eastside",    risk:0.15 },
+  { name:"Westbrook",   risk:0.10 },
+  { name:"Northgate",   risk:0.12 },
+  { name:"Southport",   risk:0.18 },
+  { name:"The Suburbs", risk:0.05 },
+  { name:"The Docks",   risk:0.22 },
+  { name:"University",  risk:0.08 },
+];
+
+const SUPPLIERS = [
+  {
+    name:"Colombian Drug Lords", tag:"Medellin Connect",
+    specialties:["Coke"], also:["Heroin"],
+    discount:0.40, minOrder:10, risk:0.15, minRep:0,
+    flavor:[
+      "A man in a linen suit meets you at a warehouse.",
+      "Your contact slides you a burner phone. 'Call this number, amigo.'",
+      "A private plane lands on a dirt strip outside town.",
+    ],
+    bustMsgs:[
+      "The Colombians suspect you're a rat. Guns drawn!",
+      "DEA raids the warehouse! Everyone scatters!",
+      "The shipment was seized at customs. Your money's gone.",
+    ]
+  },
+  {
+    name:"Mexican Cartel", tag:"Sinaloa Pipeline",
+    specialties:["Meth","Fent","Heroin"], also:["Weed","Coke"],
+    discount:0.35, minOrder:15, risk:0.20, minRep:5,
+    flavor:[
+      "A convoy of black SUVs pulls up. Business time.",
+      "You meet at a taco stand. The real menu is underneath.",
+      "A tunnel entrance behind a tire shop. Your connect is waiting.",
+    ],
+    bustMsgs:[
+      "Rival cartel ambush! Bullets flying everywhere!",
+      "The feds are onto this route. Deal's off — they took a 'fee'.",
+      "Your contact got arrested. The whole network is burned.",
+    ]
+  },
+  {
+    name:"Golden Triangle", tag:"Southeast Asia Syndicate",
+    specialties:["Heroin","Molly"], also:["Shrooms","Acid"],
+    discount:0.45, minOrder:8, risk:0.12, minRep:3,
+    flavor:[
+      "A cargo container at the docks. The seal is already broken.",
+      "A quiet man hands you a package wrapped in newspaper.",
+      "The shipment came in on a fishing boat. Smells like the sea.",
+    ],
+    bustMsgs:[
+      "Coast guard intercepts the shipment. Product lost at sea.",
+      "The package was a decoy. You've been ripped off.",
+      "Pirates hit the cargo ship. Partial delivery only.",
+    ]
+  },
+  {
+    name:"US Shadow Government", tag:"Black Budget Division",
+    specialties:["Fent","Meth"], also:["Coke","Molly","Acid"],
+    discount:0.50, minOrder:5, risk:0.08, minRep:10,
+    flavor:[
+      "A man in a dark suit flashes a badge you've never seen before.",
+      "The drop is at a decommissioned military base. No cameras.",
+      "An unmarked helicopter delivers the goods. No questions asked.",
+      "Your contact says: 'This operation doesn't exist. Neither do you.'",
+    ],
+    bustMsgs:[
+      "The operation's been 'disavowed.' Men in black take your cash.",
+      "A black helicopter circles. Your contact vanishes. Half the product too.",
+      "Turns out this was a sting operation by a rival agency.",
+    ]
+  },
+  {
+    name:"Alien Greys", tag:"Zeta Reticuli Traders",
+    specialties:["Nyborg"], also:[],
+    discount:0.30, minOrder:3, risk:0.25, minRep:15,
+    flavor:[
+      "A blinding light in a cornfield. They're here.",
+      "You wake up on a metal table. There's a package beside you.",
+      "The crop circles spell out GPS coordinates. You follow them.",
+      "A grey figure materializes in your back seat. 'We have product.'",
+      "Static on every channel. Then a voice: 'Bring currency. Arrive alone.'",
+    ],
+    bustMsgs:[
+      "Dimensional rift collapses mid-transfer. Half the Nyborg is scattered across spacetime.",
+      "The Greys probe your mind and decide you're 'insufficiently evolved.' Deal's off.",
+      "MIB agents burst in! The Greys teleport away, leaving you holding the bag.",
+    ],
+    successMsgs:[
+      "The grey blinks sideways. 'Pleasure doing business, Earth creature.'",
+      "You feel a strange tingling. Missing time? Doesn't matter — you got the goods.",
+      "'Return when you need more. We are always watching.'",
+    ]
+  },
+];
+
+// ── Utility ───────────────────────────────────────────────
+const $ = sel => document.querySelector(sel);
+const fmt = n => {
+  const neg = n < 0; n = Math.abs(Math.floor(n));
+  const s = n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return neg ? `-${s}` : s;
+};
+const rand = (a,b) => Math.floor(Math.random()*(b-a+1))+a;
+const pick = arr => arr[Math.floor(Math.random()*arr.length)];
+const avgPrice = d => Math.floor((DRUGS[d].min+DRUGS[d].max)/2);
+
+// ── Game State ────────────────────────────────────────────
+let S = {};
+
+function newGame(){
+  S = {
+    cash:2000, debt:5000, bank:0, day:1, cityIdx:0,
+    inv:{}, health:100, rep:0, gun:false,
+    prices:{}, supplierHeat:{}, log:[], view:'market',
+  };
+  DRUG_NAMES.forEach(d=>S.inv[d]=0);
+  SUPPLIERS.forEach(s=>S.supplierHeat[s.name]=0);
+  genPrices();
+  render();
+}
+
+function genPrices(){
+  DRUG_NAMES.forEach(d=>{
+    S.prices[d]=rand(DRUGS[d].min, DRUGS[d].max);
+  });
+}
+
+function totalInv(){ return Object.values(S.inv).reduce((a,b)=>a+b,0); }
+
+function addLog(msg, cls='info'){
+  S.log.unshift({msg, cls, day:S.day});
+  if(S.log.length>100) S.log.length=100;
+}
+
+// ── Core Actions ──────────────────────────────────────────
+
+function doBuy(drug, qty){
+  const price=S.prices[drug], cost=qty*price;
+  if(cost>S.cash||qty+totalInv()>100||qty<=0) return;
+  S.cash-=cost; S.inv[drug]+=qty;
+  addLog(`Bought ${qty} ${drug} for $${fmt(cost)}`, 'success');
+  render();
+}
+
+function doSell(drug, qty){
+  if(qty<=0||qty>S.inv[drug]) return;
+  const rev=qty*S.prices[drug];
+  S.cash+=rev; S.inv[drug]-=qty;
+  if(qty>=5) S.rep++;
+  addLog(`Sold ${qty} ${drug} for $${fmt(rev)}`, 'success');
+  render();
+}
+
+function doTravel(idx){
+  if(idx===S.cityIdx) return;
+  S.cityIdx=idx; S.day++;
+  applyInterest();
+  genPrices();
+  addLog(`Drove to ${CITIES[idx].name}`, 'info');
+  randomEvent(CITIES[idx]);
+  if(S.health<=0||S.day>30){
+    S.view='gameover'; render(); return;
+  }
+  S.view='market'; render();
+}
+
+function applyInterest(){
+  if(S.debt<=0) return;
+  const i=Math.floor(S.debt*0.10);
+  S.debt+=i;
+}
+
+function doDeposit(amt){
+  amt=Math.min(amt,S.cash); if(amt<=0) return;
+  S.cash-=amt; S.bank+=amt;
+  addLog(`Deposited $${fmt(amt)} in the bank`, 'info');
+  render();
+}
+
+function doWithdraw(amt){
+  amt=Math.min(amt,S.bank); if(amt<=0) return;
+  S.bank-=amt; S.cash+=amt;
+  addLog(`Withdrew $${fmt(amt)} from the bank`, 'info');
+  render();
+}
+
+function doPayDebt(amt){
+  amt=Math.min(amt, S.cash, S.debt); if(amt<=0) return;
+  S.cash-=amt; S.debt-=amt;
+  addLog(S.debt===0?'Debt paid in full!': `Paid $${fmt(amt)} toward debt`, S.debt===0?'success':'info');
+  render();
+}
+
+function doPickupGun(yes){
+  if(yes){ S.gun=true; addLog("Picked up a gun. Might help with the cops.",'event'); }
+  else addLog("Left the gun.","info");
+  closeModal(); render();
+}
+
+// ── Random Events ─────────────────────────────────────────
+
+function randomEvent(city){
+  const r=Math.random();
+  if(r < city.risk) policeEvent();
+  else if(r < city.risk+0.06) priceSpike();
+  else if(r < city.risk+0.11) priceCrash();
+  else if(r < city.risk+0.14) findDrugs();
+  else if(!S.gun && r>0.92) findGun();
+  else if(S.rep>8 && r>0.88) supplierApproach();
+}
+
+function policeEvent(){
+  if(S.gun && Math.random()<0.5){
+    addLog("POLICE! You flash your piece and speed away!",'event'); return;
+  }
+  if(totalInv()===0){
+    addLog("Police search your car but find nothing. Free to go.",'event'); return;
+  }
+  if(Math.random()<0.4){
+    addLog("POLICE! You floor it and escape through a side street!",'event'); return;
+  }
+  // busted
+  let msgs=["BUSTED! The cops rough you up."];
+  DRUG_NAMES.forEach(d=>{
+    if(S.inv[d]<=0) return;
+    const lost=rand(1,Math.min(S.inv[d],3));
+    S.inv[d]-=lost; msgs.push(`  Confiscated ${lost} ${d}`);
+  });
+  const fine=Math.min(S.cash, rand(500,2000));
+  S.cash-=fine; const dmg=rand(5,15); S.health-=dmg;
+  msgs.push(`  Fined $${fmt(fine)} | Health -${dmg}%`);
+  addLog(msgs.join('\n'),'danger');
+}
+
+function priceSpike(){
+  const d=pick(DRUG_NAMES), m=rand(2,4); S.prices[d]*=m;
+  const reasons=["A shipment got seized","Major bust across town","Supply chain dried up"];
+  addLog(`${pick(reasons)} — ${d} prices x${m}!`,'event');
+}
+
+function priceCrash(){
+  const d=pick(DRUG_NAMES);
+  S.prices[d]=Math.floor(DRUGS[d].min*(.3+Math.random()*.4));
+  const reasons=["Huge shipment flooded the market","Rivals dumping at rock bottom","Someone's giving it away"];
+  addLog(`${pick(reasons)} — ${d} prices crash!`,'event');
+}
+
+function findDrugs(){
+  const d=pick(DRUG_NAMES.filter(x=>x!=='Nyborg'));
+  let qty=rand(1,5); qty=Math.min(qty, 100-totalInv()); if(qty<=0) return;
+  S.inv[d]+=qty;
+  const spots=["under a dumpster","in an alley","behind a gas station","in a stolen car"];
+  addLog(`Found ${qty} ${d} stashed ${pick(spots)}!`,'success');
+}
+
+function findGun(){
+  showModal('Found a Gun','You find a gun in a parking lot. Pick it up?', null,
+    [{text:'Pick it up', action:()=>doPickupGun(true), cls:'primary'},
+     {text:'Leave it', action:()=>doPickupGun(false)}]);
+}
+
+function supplierApproach(){
+  const avail=SUPPLIERS.filter(s=>S.rep>=s.minRep);
+  if(!avail.length) return;
+  const s=pick(avail);
+  addLog(`Word on the street: ${s.tag} is looking for new distributors. Rep +1`,'event');
+  S.rep++;
+}
+
+// ── Wholesale ─────────────────────────────────────────────
+
+function doWholesaleBuy(supplierIdx, drug, qty){
+  const sup=SUPPLIERS[supplierIdx];
+  const isSpc=sup.specialties.includes(drug);
+  const disc=isSpc ? sup.discount : sup.discount*0.6;
+  const base=S.prices[drug]||avgPrice(drug);
+  const unitP=Math.floor(base*(1-disc));
+  const cost=qty*unitP;
+  if(cost>S.cash||qty+totalInv()>100||qty<sup.minOrder) return;
+
+  // risk check
+  const risk=sup.risk+(S.supplierHeat[sup.name]*0.03);
+  if(Math.random()<risk){
+    // bust
+    const bustMsg=pick(sup.bustMsgs);
+    const cashLoss=Math.floor(S.cash*(.15+Math.random()*.35));
+    const hpLoss=rand(0,25);
+    S.cash-=cashLoss; S.health-=hpLoss;
+    let log=`${bustMsg}`;
+    if(cashLoss>0) log+=`\n  Lost $${fmt(cashLoss)}!`;
+    if(hpLoss>0) log+=`\n  Health -${hpLoss}%!`;
+    // partial delivery chance
+    if(Math.random()<0.4){
+      const partial=Math.floor(qty*(0.3+Math.random()*0.3));
+      if(partial>0){ S.inv[drug]+=partial; log+=`\n  Salvaged ${partial} ${drug} from the chaos.`; }
+    }
+    S.supplierHeat[sup.name]+=2;
+    addLog(log,'danger');
+  } else {
+    S.cash-=cost; S.inv[drug]+=qty;
+    S.rep+=Math.ceil(qty/5);
+    S.supplierHeat[sup.name]++;
+    let log=`Wholesale: ${qty} ${drug} from ${sup.name} for $${fmt(cost)}. Rep +${Math.ceil(qty/5)}`;
+    if(sup.successMsgs) log+=`\n  "${pick(sup.successMsgs)}"`;
+    addLog(log,'success');
+  }
+
+  if(S.health<=0){ S.view='gameover'; }
+  else { S.view='market'; }
+  closeModal(); render();
+}
+
+// ── Modal System ──────────────────────────────────────────
+
+let modalEl=null;
+
+function showModal(title, text, inputCfg, buttons){
+  const ov=document.createElement('div');
+  ov.className='modal-overlay';
+  let html=`<div class="modal"><h3>${title}</h3>`;
+  if(text) html+=`<p style="margin:8px 0;font-size:.85em">${text}</p>`;
+  if(inputCfg) html+=`<div class="info">${inputCfg.info||''}</div><input type="number" id="modal-input" min="${inputCfg.min||0}" max="${inputCfg.max||9999}" value="${inputCfg.default||''}" placeholder="${inputCfg.placeholder||'Amount'}">`;
+  html+=`<div class="modal-btns">`;
+  buttons.forEach((b,i)=>{
+    html+=`<button class="btn ${b.cls||''}" data-idx="${i}">${b.text}</button>`;
+  });
+  html+=`</div></div>`;
+  ov.innerHTML=html;
+  document.body.appendChild(ov);
+  modalEl=ov;
+  const inp=ov.querySelector('#modal-input');
+  if(inp){ inp.focus(); inp.select();
+    inp.addEventListener('keydown',e=>{ if(e.key==='Enter') buttons[0].action(parseInt(inp.value)||0); });
+  }
+  ov.querySelectorAll('.modal-btns .btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const idx=parseInt(btn.dataset.idx);
+      const val=inp?parseInt(inp.value)||0:null;
+      buttons[idx].action(val);
+    });
+  });
+  ov.addEventListener('click',e=>{ if(e.target===ov) closeModal(); });
+}
+
+function closeModal(){
+  if(modalEl){ modalEl.remove(); modalEl=null; }
+}
+
+// ── Prompt Modals ─────────────────────────────────────────
+
+function promptBuy(drug){
+  const price=S.prices[drug];
+  const maxA=Math.floor(S.cash/price);
+  const maxC=100-totalInv();
+  const max=Math.min(maxA,maxC);
+  if(max<=0){ addLog(maxA===0?"Can't afford any "+drug:"Inventory full!",'danger'); render(); return; }
+  showModal(`Buy ${drug}`, `Price: $${fmt(price)} each`, {min:1,max,info:`Cash: $${fmt(S.cash)} | Space: ${maxC} | Can afford: ${maxA}`,placeholder:`1-${max}`},
+    [{text:'Buy', action:v=>{closeModal();doBuy(drug,Math.min(v,max))}, cls:'primary'},
+     {text:'Max', action:()=>{closeModal();doBuy(drug,max)}, cls:''},
+     {text:'Cancel', action:()=>closeModal()}]);
+}
+
+function promptSell(drug){
+  if(S.inv[drug]<=0){ addLog("You don't have any "+drug,'danger'); render(); return; }
+  const max=S.inv[drug], price=S.prices[drug];
+  showModal(`Sell ${drug}`, `Price: $${fmt(price)} each | You have: ${max}`,
+    {min:1,max,placeholder:`1-${max}`},
+    [{text:'Sell', action:v=>{closeModal();doSell(drug,Math.min(v,max))}, cls:'primary'},
+     {text:'Sell All', action:()=>{closeModal();doSell(drug,max)}},
+     {text:'Cancel', action:()=>closeModal()}]);
+}
+
+function promptDeposit(){
+  if(S.cash<=0) return;
+  showModal('Bank Deposit', null, {min:1,max:S.cash,info:`Cash: $${fmt(S.cash)}`,placeholder:'Amount'},
+    [{text:'Deposit', action:v=>{closeModal();doDeposit(v)}, cls:'primary'},
+     {text:'All', action:()=>{closeModal();doDeposit(S.cash)}},
+     {text:'Cancel', action:()=>closeModal()}]);
+}
+
+function promptWithdraw(){
+  if(S.bank<=0) return;
+  showModal('Bank Withdraw', null, {min:1,max:S.bank,info:`Bank: $${fmt(S.bank)}`,placeholder:'Amount'},
+    [{text:'Withdraw', action:v=>{closeModal();doWithdraw(v)}, cls:'primary'},
+     {text:'All', action:()=>{closeModal();doWithdraw(S.bank)}},
+     {text:'Cancel', action:()=>closeModal()}]);
+}
+
+function promptPayDebt(){
+  if(S.debt<=0||S.cash<=0) return;
+  const max=Math.min(S.cash,S.debt);
+  showModal('Pay Loan Shark', null, {min:1,max,info:`Debt: $${fmt(S.debt)} | Cash: $${fmt(S.cash)}`,placeholder:'Amount'},
+    [{text:'Pay', action:v=>{closeModal();doPayDebt(v)}, cls:'primary'},
+     {text:'Pay Max', action:()=>{closeModal();doPayDebt(max)}},
+     {text:'Cancel', action:()=>closeModal()}]);
+}
+
+function promptWholesale(supIdx){
+  const sup=SUPPLIERS[supIdx];
+  if(S.rep<sup.minRep) return;
+
+  const products=[...sup.specialties,...sup.also];
+  let html=`<p style="font-style:italic;color:var(--dim);font-size:.8em;margin:8px 0">"${pick(sup.flavor)}"</p>`;
+  html+=`<div style="text-align:left">`;
+  products.forEach((drug,i)=>{
+    const isSpc=sup.specialties.includes(drug);
+    const disc=isSpc?sup.discount:sup.discount*0.6;
+    const base=S.prices[drug]||avgPrice(drug);
+    const wp=Math.floor(base*(1-disc));
+    const street=S.prices[drug]; const savings=Math.floor((1-wp/street)*100);
+    html+=`<div class="deal-product" data-drug="${drug}" data-idx="${supIdx}">`;
+    html+=`<span class="drug-name">${drug}</span> — $${fmt(wp)}/unit `;
+    html+=`<span class="savings">${savings}% below street</span>`;
+    html+=`${isSpc?' ★':''}`;
+    html+=`</div>`;
+  });
+  html+=`</div>`;
+
+  const ov=document.createElement('div');
+  ov.className='modal-overlay';
+  ov.innerHTML=`<div class="modal" style="max-width:500px"><h3>${sup.name}</h3>${html}<div class="modal-btns" style="margin-top:12px"><button class="btn" onclick="closeModal()">Back</button></div></div>`;
+  document.body.appendChild(ov);
+  modalEl=ov;
+
+  ov.querySelectorAll('.deal-product').forEach(el=>{
+    el.addEventListener('click',()=>{
+      const drug=el.dataset.drug;
+      closeModal();
+      promptWholesaleQty(supIdx, drug);
+    });
+  });
+  ov.addEventListener('click',e=>{if(e.target===ov) closeModal();});
+}
+
+function promptWholesaleQty(supIdx, drug){
+  const sup=SUPPLIERS[supIdx];
+  const isSpc=sup.specialties.includes(drug);
+  const disc=isSpc?sup.discount:sup.discount*0.6;
+  const base=S.prices[drug]||avgPrice(drug);
+  const unitP=Math.floor(base*(1-disc));
+  const maxA=Math.floor(S.cash/unitP);
+  const maxC=100-totalInv();
+  const max=Math.min(maxA,maxC);
+  const min=sup.minOrder;
+
+  if(max<min){
+    addLog(maxA<min?`Need $${fmt(min*unitP)} minimum for ${drug} from ${sup.name}`:'Not enough inventory space','danger');
+    render(); return;
+  }
+
+  const riskPct=Math.round((sup.risk+S.supplierHeat[sup.name]*0.03)*100);
+  showModal(`Wholesale: ${drug}`,
+    `From: ${sup.name}<br>Price: $${fmt(unitP)}/unit (${Math.round(disc*100)}% off)<br>Risk: ${riskPct}%`,
+    {min,max,info:`Min order: ${min} | Max: ${max}`,placeholder:`${min}-${max}`},
+    [{text:'Buy', action:v=>{if(v>=min&&v<=max){closeModal();doWholesaleBuy(supIdx,drug,v);}}, cls:'primary'},
+     {text:'Max', action:()=>{closeModal();doWholesaleBuy(supIdx,drug,max)}},
+     {text:'Cancel', action:()=>closeModal()}]);
+}
+
+// ── Rendering ─────────────────────────────────────────────
+
+function render(){
+  const g=$('#game');
+
+  if(!S.day){ renderTitle(g); return; }
+  if(S.view==='gameover'){ renderGameOver(g); return; }
+  if(S.day>30){ S.view='gameover'; renderGameOver(g); return; }
+
+  let html='';
+
+  // header
+  html+=`<div class="header"><h1>STREET HUSTLE</h1><div class="sub">Buy low. Sell high. Survive.</div></div>`;
+
+  // status
+  html+=`<div class="status-bar">
+    <div class="stat"><span class="stat-label">Day</span><span class="stat-value day">${S.day} / 30</span></div>
+    <div class="stat"><span class="stat-label">Location</span><span class="stat-value">${CITIES[S.cityIdx].name}</span></div>
+    <div class="stat"><span class="stat-label">Health</span><span class="stat-value health">${S.health}%</span></div>
+    <div class="stat"><span class="stat-label">Cash</span><span class="stat-value cash">$${fmt(S.cash)}</span></div>
+    <div class="stat"><span class="stat-label">Bank</span><span class="stat-value">$${fmt(S.bank)}</span></div>
+    <div class="stat"><span class="stat-label">Debt</span><span class="stat-value debt">$${fmt(S.debt)}</span></div>
+    <div class="stat"><span class="stat-label">Inventory</span><span class="stat-value">${totalInv()}/100</span></div>
+    <div class="stat"><span class="stat-label">Rep</span><span class="stat-value rep">${S.rep}</span></div>
+    ${S.gun?'<div class="stat"><span class="stat-label">Weapon</span><span class="stat-value" style="color:var(--orange)">Armed</span></div>':''}
+  </div>`;
+
+  // nav tabs
+  const tabs=[{id:'market',label:'Market'},{id:'travel',label:'Travel'},{id:'wholesale',label:'Wholesale'},{id:'bank',label:'Bank'}];
+  html+=`<div class="actions-bar">`;
+  tabs.forEach(t=>{
+    const cls=S.view===t.id?'btn primary':'btn';
+    html+=`<button class="${cls}" data-tab="${t.id}">${t.label}</button>`;
+  });
+  html+=`</div>`;
+
+  // view panel
+  if(S.view==='market') html+=renderMarket();
+  else if(S.view==='travel') html+=renderTravel();
+  else if(S.view==='wholesale') html+=renderWholesale();
+  else if(S.view==='bank') html+=renderBank();
+
+  // log
+  html+=`<div class="panel"><div class="panel-title">Event Log</div><div class="log">`;
+  S.log.slice(0,20).forEach(e=>{
+    html+=`<div class="log-entry ${e.cls}"><span style="color:var(--dim);font-size:.7em">Day ${e.day}</span> ${e.msg.replace(/\n/g,'<br>')}</div>`;
+  });
+  if(!S.log.length) html+=`<div class="log-entry info">No events yet.</div>`;
+  html+=`</div></div>`;
+
+  g.innerHTML=html;
+
+  // tab listeners
+  g.querySelectorAll('[data-tab]').forEach(btn=>{
+    btn.addEventListener('click',()=>{ S.view=btn.dataset.tab; render(); });
+  });
+
+  // market listeners
+  g.querySelectorAll('[data-buy]').forEach(btn=>{
+    btn.addEventListener('click',()=>promptBuy(btn.dataset.buy));
+  });
+  g.querySelectorAll('[data-sell]').forEach(btn=>{
+    btn.addEventListener('click',()=>promptSell(btn.dataset.sell));
+  });
+
+  // travel listeners
+  g.querySelectorAll('[data-travel]').forEach(btn=>{
+    btn.addEventListener('click',()=>doTravel(parseInt(btn.dataset.travel)));
+  });
+
+  // supplier listeners
+  g.querySelectorAll('[data-supplier]').forEach(card=>{
+    card.addEventListener('click',()=>{
+      const idx=parseInt(card.dataset.supplier);
+      if(S.rep>=SUPPLIERS[idx].minRep) promptWholesale(idx);
+    });
+  });
+}
+
+function renderMarket(){
+  let html=`<table class="market"><thead><tr>
+    <th>Product</th><th style="text-align:right">Price</th><th style="text-align:center">Held</th><th style="text-align:right">Actions</th>
+  </tr></thead><tbody>`;
+  DRUG_NAMES.forEach(d=>{
+    const p=S.prices[d], h=S.inv[d];
+    html+=`<tr>
+      <td class="drug-name">${d}</td>
+      <td class="price">$${fmt(p)}</td>
+      <td class="qty">${h||'-'}</td>
+      <td class="actions">
+        <button class="btn-sm" data-buy="${d}">Buy</button>
+        <button class="btn-sm sell" data-sell="${d}" ${h<=0?'disabled':''}>Sell</button>
+      </td>
+    </tr>`;
+  });
+  html+=`</tbody></table>`;
+  return html;
+}
+
+function renderTravel(){
+  let html=`<div class="panel"><div class="panel-title">Choose Destination (costs 1 day)</div><div class="travel-grid">`;
+  CITIES.forEach((c,i)=>{
+    const cur=i===S.cityIdx;
+    const riskBars='&#9608;'.repeat(Math.ceil(c.risk*15));
+    html+=`<button class="city-btn ${cur?'current':''}" data-travel="${i}" ${cur?'disabled':''}>
+      <div class="city-name">${c.name}${cur?' (here)':''}</div>
+      <div class="city-risk">Risk: <span style="color:var(--red)">${riskBars}</span></div>
+    </button>`;
+  });
+  html+=`</div></div>`;
+  return html;
+}
+
+function renderWholesale(){
+  let html=`<div class="panel"><div class="panel-title">Wholesale Suppliers — Buy in bulk at steep discounts</div><div class="supplier-list">`;
+  SUPPLIERS.forEach((s,i)=>{
+    const locked=S.rep<s.minRep;
+    html+=`<div class="supplier-card ${locked?'locked':''}" data-supplier="${i}">
+      <div class="supplier-name">${locked?'???':s.name}</div>
+      <div class="supplier-tag">${locked?`Locked — need ${s.minRep} rep`:s.tag}</div>`;
+    if(!locked){
+      const products=[...s.specialties,...s.also].join(', ');
+      const riskPct=Math.round((s.risk+S.supplierHeat[s.name]*0.03)*100);
+      html+=`<div class="supplier-info">${Math.round(s.discount*100)}% off | Min order: ${s.minOrder} | Risk: ${riskPct}%</div>`;
+      html+=`<div class="supplier-products">Sells: ${products}</div>`;
+    }
+    html+=`</div>`;
+  });
+  html+=`</div></div>`;
+  return html;
+}
+
+function renderBank(){
+  let html=`<div class="panel"><div class="panel-title">Finance</div>`;
+  html+=`<div style="display:flex;flex-wrap:wrap;gap:8px;margin:12px 0">`;
+  html+=`<button class="btn" onclick="promptDeposit()" ${S.cash<=0?'disabled':''}>Deposit Cash</button>`;
+  html+=`<button class="btn" onclick="promptWithdraw()" ${S.bank<=0?'disabled':''}>Withdraw Cash</button>`;
+  html+=`<button class="btn danger" onclick="promptPayDebt()" ${S.debt<=0||S.cash<=0?'disabled':''}>Pay Debt ($${fmt(S.debt)})</button>`;
+  html+=`</div>`;
+  html+=`<div style="font-size:.8em;color:var(--dim);margin-top:8px">
+    Loan shark charges 10% daily interest on debt.<br>
+    Bank deposits are safe from police fines but earn no interest.
+  </div>`;
+  html+=`</div>`;
+  return html;
+}
+
+function renderTitle(g){
+  g.innerHTML=`<div class="title-screen">
+    <pre>
+ ____  _                  _     _   _           _   _
+/ ___|| |_ _ __ ___  ___| |_  | | | |_   _ ___| |_| | ___
+\\___ \\| __| '__/ _ \\/ _ \\ __| | |_| | | | / __| __| |/ _ \\
+ ___) | |_| | |  __/  __/ |_  |  _  | |_| \\__ \\ |_| |  __/
+|____/ \\__|_|  \\___|\\___|\\__| |_| |_|\\__,_|___/\\__|_|\\___|
+    </pre>
+    <div class="suppliers-list">
+      Colombian Drug Lords | Mexican Cartel | Golden Triangle<br>
+      US Shadow Government | Alien Greys
+    </div>
+    <div class="start-info">
+      You've got <span style="color:var(--green)">$2,000</span> cash,
+      a <span style="color:var(--red)">$5,000</span> debt to a loan shark,<br>
+      and <span style="color:var(--yellow)">30 days</span> to make your fortune.<br><br>
+      Buy from the street or go wholesale with international suppliers.<br>
+      Build your reputation to unlock the big connects.
+    </div>
+    <button class="btn primary start-btn" id="start-btn">&#9654; START GAME</button>
+  </div>`;
+  g.querySelector('#start-btn').addEventListener('click',newGame);
+}
+
+function renderGameOver(g){
+  let netWorth=S.cash+S.bank-S.debt;
+  let invValue=0;
+  DRUG_NAMES.forEach(d=>{
+    const v=S.inv[d]*avgPrice(d); invValue+=v; netWorth+=v;
+  });
+
+  const ranks=[
+    [-Infinity,0,"Dead Broke","The loan shark sends his regards."],
+    [0,10000,"Small Timer","Barely scraping by."],
+    [10001,50000,"Corner Boy","You're making a name."],
+    [50001,200000,"Shot Caller","Respect on the streets."],
+    [200001,500000,"Kingpin","You run this town."],
+    [500001,1000000,"Cartel Boss","International connections."],
+    [1000001,5000000,"Shadow Broker","Governments owe you favors."],
+    [5000001,Infinity,"Cosmic Hustler","Even the Greys respect you."],
+  ];
+  const rank=ranks.find(r=>netWorth>=r[0]&&netWorth<=r[1])||ranks[0];
+
+  g.innerHTML=`<div class="game-over">
+    <h2>GAME OVER</h2>
+    <p style="color:var(--dim);margin-bottom:20px">${S.health<=0?"You didn't survive the streets.":"30 days are up. Time to settle accounts."}</p>
+    <div class="final-stats">
+      Cash: <span style="color:var(--green)">$${fmt(S.cash)}</span><br>
+      Bank: $${fmt(S.bank)}<br>
+      Debt: <span style="color:var(--red)">$${fmt(S.debt)}</span><br>
+      ${invValue>0?`Inventory: $${fmt(invValue)} (est.)<br>`:''}
+      Reputation: ${S.rep}<br>
+    </div>
+    <div class="net-worth" style="color:${netWorth>=0?'var(--green)':'var(--red)'}">Net Worth: $${fmt(netWorth)}</div>
+    <div class="rank">${rank[2]} — ${rank[3]}</div>
+    <button class="btn primary" style="margin-top:20px;font-size:1.1em;padding:10px 30px" id="restart-btn">PLAY AGAIN</button>
+  </div>`;
+  g.querySelector('#restart-btn').addEventListener('click',()=>{S={};render();});
+}
+
+// expose globals for inline onclick
+window.promptDeposit=promptDeposit;
+window.promptWithdraw=promptWithdraw;
+window.promptPayDebt=promptPayDebt;
+window.closeModal=closeModal;
+
+// ── Init ──────────────────────────────────────────────────
+render();
+</script>
+</body>
+</html>
