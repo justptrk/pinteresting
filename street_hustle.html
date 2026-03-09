@@ -43,21 +43,24 @@ body{background:var(--bg);color:var(--text);font-family:'Courier New',monospace;
 .market .qty{text-align:center}
 .market .drug-name{color:var(--accent)}
 .market .actions{text-align:right}
-.market .btn-sm{padding:3px 10px;margin-left:4px;font-size:.75em;border-radius:3px;
-  border:1px solid var(--border);background:var(--panel);color:var(--text);cursor:pointer}
-.market .btn-sm:hover{border-color:var(--accent);color:var(--accent)}
-.market .btn-sm.sell{color:var(--green)}
+.market .btn-sm{padding:6px 16px;margin-left:4px;font-size:.85em;border-radius:4px;
+  border:1px solid var(--border);background:var(--panel);color:var(--text);cursor:pointer;
+  font-family:inherit;font-weight:bold;transition:all .15s}
+.market .btn-sm:hover{border-color:var(--accent);color:var(--accent);background:#1a1a2a}
+.market .btn-sm.sell{color:var(--green);border-color:#004d2e}
 .market .btn-sm.sell:hover{border-color:var(--green)}
 
 /* Buttons */
 .actions-bar{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0;justify-content:center}
-.btn{padding:8px 20px;border:1px solid var(--border);background:var(--panel);
-  color:var(--text);font-family:inherit;font-size:.85em;border-radius:4px;cursor:pointer;
-  transition:all .15s}
+.btn{padding:10px 22px;border:1px solid var(--border);background:var(--panel);
+  color:var(--text);font-family:inherit;font-size:.9em;border-radius:4px;cursor:pointer;
+  transition:all .15s;font-weight:bold}
 .btn:hover{border-color:var(--accent);color:var(--accent);background:#1a1a2a}
-.btn.primary{border-color:var(--accent);color:var(--accent)}
+.btn.primary{border-color:var(--accent);color:var(--accent);background:#0a1a20}
 .btn.danger{border-color:var(--red);color:var(--red)}
 .btn:disabled{opacity:.3;cursor:default;border-color:var(--border);color:var(--dim)}
+.hint{text-align:center;color:var(--dim);font-size:.75em;padding:6px;margin:4px 0;
+  border:1px dashed var(--border);border-radius:4px}
 
 /* Travel panel */
 .travel-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin:12px 0}
@@ -110,10 +113,14 @@ body{background:var(--bg);color:var(--text);font-family:'Courier New',monospace;
 .modal .info{color:var(--dim);font-size:.8em;margin:6px 0}
 
 /* Title screen */
-.title-screen{text-align:center;padding:60px 20px}
+.title-screen{text-align:center;padding:40px 20px}
 .title-screen pre{color:var(--accent);font-size:.55em;line-height:1.2;display:inline-block;text-align:left}
 .title-screen .suppliers-list{color:var(--dim);font-size:.8em;margin:12px 0}
 .title-screen .start-info{color:var(--text);margin:20px 0;font-size:.9em;line-height:1.8}
+.start-btn{font-size:1.4em!important;padding:16px 60px!important;animation:pulse 2s infinite;
+  border:2px solid var(--accent)!important;text-transform:uppercase;letter-spacing:3px;
+  margin-top:30px!important;display:inline-block}
+@keyframes pulse{0%,100%{box-shadow:0 0 5px var(--accent)}50%{box-shadow:0 0 25px var(--accent),0 0 50px rgba(0,229,255,.3)}}
 
 /* Game over */
 .game-over{text-align:center;padding:40px 20px}
@@ -780,7 +787,7 @@ function renderTitle(g){
       Buy from the street or go wholesale with international suppliers.<br>
       Build your reputation to unlock the big connects.
     </div>
-    <button class="btn primary" style="font-size:1.2em;padding:12px 40px" id="start-btn">START GAME</button>
+    <button class="btn primary start-btn" id="start-btn">&#9654; START GAME</button>
   </div>`;
   g.querySelector('#start-btn').addEventListener('click',newGame);
 }
