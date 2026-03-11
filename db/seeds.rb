@@ -1,5 +1,11 @@
 puts "Seeding MarketPro..."
 
+# Skip if already seeded
+if User.count > 0
+  puts "Database already seeded. Skipping."
+  exit
+end
+
 # Users
 admin = User.create!(
   first_name: 'Patrick', last_name: 'Kelly', email: 'patrick@marketpro.com',

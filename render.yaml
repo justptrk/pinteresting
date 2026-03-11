@@ -1,0 +1,26 @@
+databases:
+  - name: marketpro-db
+    plan: free
+    databaseName: marketpro
+    user: marketpro
+
+services:
+  - type: web
+    name: marketpro
+    plan: free
+    runtime: ruby
+    buildCommand: "./bin/render-build.sh"
+    startCommand: "bundle exec puma -C config/puma.rb"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: marketpro-db
+          property: connectionString
+      - key: SECRET_KEY_BASE
+        generateValue: true
+      - key: RAILS_ENV
+        value: production
+      - key: RAILS_SERVE_STATIC_FILES
+        value: "true"
+      - key: RAILS_LOG_TO_STDOUT
+        value: "true"
