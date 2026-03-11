@@ -1,0 +1,20 @@
+<%= form_for @report do |f| %>
+  <% if @report.errors.any? %>
+    <div class="alert alert-danger">
+      <% @report.errors.full_messages.each do |msg| %><p><%= msg %></p><% end %>
+    </div>
+  <% end %>
+  <div class="row">
+    <div class="col-md-6"><div class="form-group"><label>Title *</label><%= f.text_field :title, class: 'form-control' %></div></div>
+    <div class="col-md-3"><div class="form-group"><label>Type</label><%= f.select :report_type, Report::REPORT_TYPES.map { |t| [t.titleize, t] }, { include_blank: '-- Select --' }, class: 'form-control' %></div></div>
+    <div class="col-md-3"><div class="form-group"><label>Status</label><%= f.select :status, Report::STATUSES.map { |s| [s.titleize, s] }, {}, class: 'form-control' %></div></div>
+  </div>
+  <div class="row">
+    <div class="col-md-4"><div class="form-group"><label>Client</label><%= f.collection_select :client_id, Client.order(:company_name), :id, :company_name, { include_blank: '-- Select --' }, class: 'form-control' %></div></div>
+    <div class="col-md-4"><div class="form-group"><label>Period Start</label><%= f.date_field :period_start, class: 'form-control' %></div></div>
+    <div class="col-md-4"><div class="form-group"><label>Period End</label><%= f.date_field :period_end, class: 'form-control' %></div></div>
+  </div>
+  <div class="form-group"><label>Summary</label><%= f.text_area :summary, class: 'form-control', rows: 6 %></div>
+  <%= f.submit class: 'btn btn-primary' %>
+  <%= link_to 'Cancel', reports_path, class: 'btn btn-default' %>
+<% end %>

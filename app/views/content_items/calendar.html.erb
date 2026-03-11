@@ -1,0 +1,46 @@
+<div class="row" style="margin-bottom: 20px;">
+  <div class="col-md-4">
+    <h2><i class="fa fa-calendar"></i> Content Calendar</h2>
+  </div>
+  <div class="col-md-4 text-center" style="padding-top: 15px;">
+    <%= link_to raw('<i class="fa fa-chevron-left"></i>'), calendar_content_items_path(date: (@date - 1.month).to_s), class: 'btn btn-default' %>
+    <strong style="font-size: 18px; margin: 0 15px;"><%= @date.strftime('%B %Y') %></strong>
+    <%= link_to raw('<i class="fa fa-chevron-right"></i>'), calendar_content_items_path(date: (@date + 1.month).to_s), class: 'btn btn-default' %>
+  </div>
+  <div class="col-md-4 text-right" style="padding-top: 15px;">
+    <%= link_to raw('<i class="fa fa-list"></i> List View'), content_items_path, class: 'btn btn-default' %>
+    <%= link_to raw('<i class="fa fa-plus"></i> New Content'), new_content_item_path, class: 'btn btn-primary' %>
+  </div>
+</div>
+
+<table class="table table-bordered" style="table-layout: fixed;">
+  <thead>
+    <tr class="active">
+      <th class="text-center">Sun</th><th class="text-center">Mon</th><th class="text-center">Tue</th>
+      <th class="text-center">Wed</th><th class="text-center">Thu</th><th class="text-center">Fri</th>
+      <th class="text-center">Sat</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% (@start_date..@end_date).each_slice(7) do |week| %>
+      <tr>
+        <% week.each do |day| %>
+          <td style="height: 120px; vertical-align: top; <%= 'background: #f9f9f9;' if day.month != @date.month %> <%= 'background: #fffff0;' if day == Date.current %>">
+            <div style="font-weight: <%= day == Date.current ? 'bold' : 'normal' %>; color: <%= day.month == @date.month ? '#333' : '#ccc' %>;">
+              <%= day.day %>
+            </div>
+            <% (@grouped_content[day] || []).each do |ci| %>
+              <div style="margin-top: 3px;">
+                <%= link_to content_item_path(ci), style: 'text-decoration: none;' do %>
+                  <span class="label label-<%= ci.status_color %>" style="display: block; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: normal;">
+                    <i class="fa fa-<%= ci.platform_icon %>"></i> <%= ci.title %>
+                  </span>
+                <% end %>
+              </div>
+            <% end %>
+          </td>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

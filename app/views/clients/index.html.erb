@@ -1,0 +1,51 @@
+<div class="row" style="margin-bottom: 20px;">
+  <div class="col-md-6">
+    <h2><i class="fa fa-building"></i> Clients
+      <span class="label label-success"><%= @active_count %> Active</span>
+      <span class="label label-info"><%= @prospect_count %> Prospects</span>
+    </h2>
+  </div>
+  <div class="col-md-6 text-right" style="padding-top: 20px;">
+    <%= link_to raw('<i class="fa fa-plus"></i> Add Client'), new_client_path, class: 'btn btn-primary' %>
+  </div>
+</div>
+
+<div class="btn-group" style="margin-bottom: 15px;">
+  <%= link_to 'All', clients_path, class: "btn btn-default #{params[:status].blank? ? 'active' : ''}" %>
+  <% Client::STATUSES.each do |s| %>
+    <%= link_to s.titleize, clients_path(status: s), class: "btn btn-default #{params[:status] == s ? 'active' : ''}" %>
+  <% end %>
+</div>
+
+<div class="table-responsive">
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Company</th>
+        <th>Contact</th>
+        <th>Status</th>
+        <th>Monthly Retainer</th>
+        <th>Active Campaigns</th>
+        <th>Leads</th>
+        <th>Account Manager</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @clients.each do |client| %>
+        <tr>
+          <td><strong><%= link_to client.company_name, client_path(client) %></strong><br><small class="text-muted"><%= client.industry %></small></td>
+          <td><%= client.contact_name %><br><small><%= client.contact_email %></small></td>
+          <td><%= status_badge(client.status, client.status_color) %></td>
+          <td><%= number_to_currency(client.monthly_retainer) %></td>
+          <td><%= client.active_campaigns_count %></td>
+          <td><%= client.total_leads %></td>
+          <td><%= client.account_manager&.full_name || 'Unassigned' %></td>
+          <td>
+            <%= link_to raw('<i class="fa fa-edit"></i>'), edit_client_path(client), class: 'btn btn-xs btn-default' %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

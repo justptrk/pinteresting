@@ -1,0 +1,82 @@
+<%= form_for @campaign do |f| %>
+  <% if @campaign.errors.any? %>
+    <div class="alert alert-danger">
+      <% @campaign.errors.full_messages.each do |msg| %><p><%= msg %></p><% end %>
+    </div>
+  <% end %>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="form-group">
+        <label>Campaign Name *</label>
+        <%= f.text_field :name, class: 'form-control' %>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="form-group">
+        <label>Channel</label>
+        <%= f.select :channel, Campaign::CHANNELS.map { |c| [c.upcase, c] }, { include_blank: '-- Select --' }, class: 'form-control' %>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="form-group">
+        <label>Status</label>
+        <%= f.select :status, Campaign::STATUSES.map { |s| [s.titleize, s] }, {}, class: 'form-control' %>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-4">
+      <div class="form-group">
+        <label>Client</label>
+        <%= f.collection_select :client_id, Client.order(:company_name), :id, :company_name, { include_blank: '-- Select --' }, class: 'form-control' %>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="form-group">
+        <label>Budget</label>
+        <div class="input-group">
+          <span class="input-group-addon">$</span>
+          <%= f.number_field :budget, class: 'form-control', step: '0.01' %>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="form-group">
+        <label>Spent</label>
+        <div class="input-group">
+          <span class="input-group-addon">$</span>
+          <%= f.number_field :spent, class: 'form-control', step: '0.01' %>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3">
+      <div class="form-group"><label>Start Date</label><%= f.date_field :start_date, class: 'form-control' %></div>
+    </div>
+    <div class="col-md-3">
+      <div class="form-group"><label>End Date</label><%= f.date_field :end_date, class: 'form-control' %></div>
+    </div>
+    <div class="col-md-3">
+      <div class="form-group"><label>Impressions</label><%= f.number_field :impressions, class: 'form-control' %></div>
+    </div>
+    <div class="col-md-3">
+      <div class="form-group"><label>Clicks</label><%= f.number_field :clicks, class: 'form-control' %></div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3">
+      <div class="form-group"><label>Conversions</label><%= f.number_field :conversions, class: 'form-control' %></div>
+    </div>
+    <div class="col-md-3">
+      <div class="form-group">
+        <label>Revenue</label>
+        <div class="input-group"><span class="input-group-addon">$</span><%= f.number_field :revenue, class: 'form-control', step: '0.01' %></div>
+      </div>
+    </div>
+  </div>
+  <div class="form-group"><label>Objective</label><%= f.text_area :objective, class: 'form-control', rows: 2 %></div>
+  <div class="form-group"><label>Description</label><%= f.text_area :description, class: 'form-control', rows: 3 %></div>
+  <%= f.submit class: 'btn btn-primary' %>
+  <%= link_to 'Cancel', campaigns_path, class: 'btn btn-default' %>
+<% end %>

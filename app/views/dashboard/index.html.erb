@@ -1,0 +1,209 @@
+<h2 style="margin-bottom: 25px;">
+  <i class="fa fa-dashboard"></i> Dashboard
+  <small class="text-muted">Welcome back, <%= current_user.first_name %>!</small>
+</h2>
+
+<!-- KPI Cards -->
+<div class="row">
+  <div class="col-md-3">
+    <div class="panel panel-primary">
+      <div class="panel-body text-center">
+        <h1 style="margin: 0; font-size: 36px;"><%= @total_clients %></h1>
+        <p class="text-muted" style="margin: 5px 0 0;"><i class="fa fa-building"></i> Active Clients</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="panel panel-success">
+      <div class="panel-body text-center">
+        <h1 style="margin: 0; font-size: 36px;"><%= @total_campaigns %></h1>
+        <p class="text-muted" style="margin: 5px 0 0;"><i class="fa fa-bullhorn"></i> Active Campaigns</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="panel panel-info">
+      <div class="panel-body text-center">
+        <h1 style="margin: 0; font-size: 36px;"><%= @total_leads %></h1>
+        <p class="text-muted" style="margin: 5px 0 0;"><i class="fa fa-users"></i> Active Leads</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="panel panel-warning">
+      <div class="panel-body text-center">
+        <h1 style="margin: 0; font-size: 36px;"><%= number_to_currency(@total_revenue, precision: 0) %></h1>
+        <p class="text-muted" style="margin: 5px 0 0;"><i class="fa fa-usd"></i> Total Revenue</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <!-- Top Campaigns -->
+  <div class="col-md-6">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 style="margin: 0;"><i class="fa fa-trophy"></i> Top Performing Campaigns
+          <span class="pull-right"><%= link_to 'View All', campaigns_path, class: 'btn btn-xs btn-default' %></span>
+        </h4>
+      </div>
+      <table class="table table-hover">
+        <thead>
+          <tr><th>Campaign</th><th>Client</th><th>Revenue</th><th>ROI</th></tr>
+        </thead>
+        <tbody>
+          <% @top_campaigns.each do |campaign| %>
+            <tr>
+              <td><%= link_to campaign.name, campaign_path(campaign) %></td>
+              <td><%= campaign.client&.company_name %></td>
+              <td><%= number_to_currency(campaign.revenue) %></td>
+              <td><span class="label label-<%= campaign.roi > 0 ? 'success' : 'danger' %>"><%= campaign.roi %>%</span></td>
+            </tr>
+          <% end %>
+          <% if @top_campaigns.empty? %>
+            <tr><td colspan="4" class="text-muted text-center">No active campaigns yet</td></tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Recent Leads -->
+  <div class="col-md-6">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 style="margin: 0;"><i class="fa fa-user-plus"></i> Recent Leads
+          <span class="pull-right"><%= link_to 'View All', leads_path, class: 'btn btn-xs btn-default' %></span>
+        </h4>
+      </div>
+      <table class="table table-hover">
+        <thead>
+          <tr><th>Name</th><th>Source</th><th>Stage</th><th>Value</th></tr>
+        </thead>
+        <tbody>
+          <% @recent_leads.each do |lead| %>
+            <tr>
+              <td><%= link_to lead.name, lead_path(lead) %></td>
+              <td><%= lead.source&.titleize %></td>
+              <td><%= status_badge(lead.stage, lead.stage_color) %></td>
+              <td><%= number_to_currency(lead.value) %></td>
+            </tr>
+          <% end %>
+          <% if @recent_leads.empty? %>
+            <tr><td colspan="4" class="text-muted text-center">No leads yet</td></tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <!-- Overdue Tasks -->
+  <div class="col-md-6">
+    <div class="panel panel-<%= @overdue_tasks.any? ? 'danger' : 'default' %>">
+      <div class="panel-heading">
+        <h4 style="margin: 0;"><i class="fa fa-exclamation-triangle"></i> Overdue Tasks
+          <span class="pull-right"><%= link_to 'View All', tasks_path, class: 'btn btn-xs btn-default' %></span>
+        </h4>
+      </div>
+      <table class="table">
+        <tbody>
+          <% @overdue_tasks.each do |task| %>
+            <tr>
+              <td><%= link_to task.title, task_path(task) %></td>
+              <td><%= task.client&.company_name %></td>
+              <td><span class="label label-<%= task.priority_color %>"><%= task.priority.titleize %></span></td>
+              <td class="text-danger"><%= task.due_date&.strftime('%b %d') %></td>
+            </tr>
+          <% end %>
+          <% if @overdue_tasks.empty? %>
+            <tr><td class="text-success text-center"><i class="fa fa-check"></i> No overdue tasks!</td></tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Upcoming Content -->
+  <div class="col-md-6">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 style="margin: 0;"><i class="fa fa-calendar"></i> Upcoming Content
+          <span class="pull-right"><%= link_to 'Calendar', calendar_content_items_path, class: 'btn btn-xs btn-default' %></span>
+        </h4>
+      </div>
+      <table class="table">
+        <tbody>
+          <% @upcoming_content.each do |content| %>
+            <tr>
+              <td><%= link_to content.title, content_item_path(content) %></td>
+              <td><%= content.platform&.titleize %></td>
+              <td><%= status_badge(content.status, content.status_color) %></td>
+              <td><%= content.scheduled_at&.strftime('%b %d, %I:%M %p') %></td>
+            </tr>
+          <% end %>
+          <% if @upcoming_content.empty? %>
+            <tr><td class="text-muted text-center">No upcoming content scheduled</td></tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Pipeline & Channel Breakdown -->
+<div class="row">
+  <div class="col-md-6">
+    <div class="panel panel-default">
+      <div class="panel-heading"><h4 style="margin: 0;"><i class="fa fa-filter"></i> Lead Pipeline</h4></div>
+      <div class="panel-body">
+        <% Lead::STAGES.each do |stage| %>
+          <% count = @leads_by_stage[stage] || 0 %>
+          <div style="margin-bottom: 10px;">
+            <strong><%= stage.titleize %></strong>
+            <span class="pull-right"><%= count %></span>
+            <%= percentage_bar(count, [Lead.active.count, 1].max, count > 0 ? 'info' : 'default') %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="panel panel-default">
+      <div class="panel-heading"><h4 style="margin: 0;"><i class="fa fa-pie-chart"></i> Campaigns by Channel</h4></div>
+      <div class="panel-body">
+        <% Campaign::CHANNELS.each do |channel| %>
+          <% count = @campaigns_by_channel[channel] || 0 %>
+          <% next if count == 0 %>
+          <div style="margin-bottom: 10px;">
+            <strong><i class="fa fa-<%= Campaign.new(channel: channel).channel_icon %>"></i> <%= channel.upcase %></strong>
+            <span class="pull-right"><%= count %> campaigns</span>
+            <%= percentage_bar(count, [@campaigns_by_channel.values.max || 1, 1].max, 'primary') %>
+          </div>
+        <% end %>
+        <% if @campaigns_by_channel.empty? %>
+          <p class="text-muted text-center">No active campaigns yet</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel panel-default">
+      <div class="panel-heading"><h4 style="margin: 0;"><i class="fa fa-bolt"></i> Quick Actions</h4></div>
+      <div class="panel-body text-center">
+        <%= link_to raw('<i class="fa fa-plus"></i> New Client'), new_client_path, class: 'btn btn-primary', style: 'margin: 5px;' %>
+        <%= link_to raw('<i class="fa fa-plus"></i> New Campaign'), new_campaign_path, class: 'btn btn-success', style: 'margin: 5px;' %>
+        <%= link_to raw('<i class="fa fa-plus"></i> New Content'), new_content_item_path, class: 'btn btn-info', style: 'margin: 5px;' %>
+        <%= link_to raw('<i class="fa fa-plus"></i> New Lead'), new_lead_path, class: 'btn btn-warning', style: 'margin: 5px;' %>
+        <%= link_to raw('<i class="fa fa-plus"></i> New Task'), new_task_path, class: 'btn btn-default', style: 'margin: 5px;' %>
+        <%= link_to raw('<i class="fa fa-plus"></i> New Report'), new_report_path, class: 'btn btn-danger', style: 'margin: 5px;' %>
+      </div>
+    </div>
+  </div>
+</div>

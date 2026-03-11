@@ -1,0 +1,41 @@
+<%= form_for @content_item do |f| %>
+  <% if @content_item.errors.any? %>
+    <div class="alert alert-danger">
+      <% @content_item.errors.full_messages.each do |msg| %><p><%= msg %></p><% end %>
+    </div>
+  <% end %>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="form-group"><label>Title *</label><%= f.text_field :title, class: 'form-control' %></div>
+    </div>
+    <div class="col-md-3">
+      <div class="form-group"><label>Content Type</label><%= f.select :content_type, ContentItem::CONTENT_TYPES.map { |t| [t.titleize, t] }, { include_blank: '-- Select --' }, class: 'form-control' %></div>
+    </div>
+    <div class="col-md-3">
+      <div class="form-group"><label>Platform</label><%= f.select :platform, ContentItem::PLATFORMS.map { |p| [p.titleize, p] }, { include_blank: '-- Select --' }, class: 'form-control' %></div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-4">
+      <div class="form-group"><label>Client</label><%= f.collection_select :client_id, Client.order(:company_name), :id, :company_name, { include_blank: '-- Select --' }, class: 'form-control' %></div>
+    </div>
+    <div class="col-md-4">
+      <div class="form-group"><label>Campaign</label><%= f.collection_select :campaign_id, Campaign.order(:name), :id, :name, { include_blank: '-- Select --' }, class: 'form-control' %></div>
+    </div>
+    <div class="col-md-4">
+      <div class="form-group"><label>Assigned To</label><%= f.collection_select :assigned_to_id, User.order(:first_name), :id, :full_name, { include_blank: '-- Select --' }, class: 'form-control' %></div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3">
+      <div class="form-group"><label>Status</label><%= f.select :status, ContentItem::STATUSES.map { |s| [s.titleize, s] }, {}, class: 'form-control' %></div>
+    </div>
+    <div class="col-md-4">
+      <div class="form-group"><label>Scheduled At</label><%= f.datetime_local_field :scheduled_at, class: 'form-control' %></div>
+    </div>
+  </div>
+  <div class="form-group"><label>Body / Copy</label><%= f.text_area :body, class: 'form-control', rows: 8 %></div>
+  <div class="form-group"><label>Notes</label><%= f.text_area :notes, class: 'form-control', rows: 3 %></div>
+  <%= f.submit class: 'btn btn-primary' %>
+  <%= link_to 'Cancel', content_items_path, class: 'btn btn-default' %>
+<% end %>

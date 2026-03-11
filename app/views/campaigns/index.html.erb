@@ -1,0 +1,50 @@
+<div class="row" style="margin-bottom: 20px;">
+  <div class="col-md-6">
+    <h2><i class="fa fa-bullhorn"></i> Campaigns</h2>
+  </div>
+  <div class="col-md-6 text-right" style="padding-top: 20px;">
+    <span class="text-muted" style="margin-right: 15px;">
+      Budget: <strong><%= number_to_currency(@total_budget, precision: 0) %></strong> |
+      Spent: <strong><%= number_to_currency(@total_spent, precision: 0) %></strong> |
+      Revenue: <strong class="text-success"><%= number_to_currency(@total_revenue, precision: 0) %></strong>
+    </span>
+    <%= link_to raw('<i class="fa fa-plus"></i> New Campaign'), new_campaign_path, class: 'btn btn-primary' %>
+  </div>
+</div>
+
+<div class="btn-group" style="margin-bottom: 5px;">
+  <%= link_to 'All', campaigns_path, class: "btn btn-default btn-sm #{params[:status].blank? && params[:channel].blank? ? 'active' : ''}" %>
+  <% Campaign::STATUSES.each do |s| %>
+    <%= link_to s.titleize, campaigns_path(status: s), class: "btn btn-default btn-sm #{params[:status] == s ? 'active' : ''}" %>
+  <% end %>
+</div>
+<div class="btn-group" style="margin-bottom: 15px; margin-left: 10px;">
+  <% Campaign::CHANNELS.each do |ch| %>
+    <%= link_to ch.upcase, campaigns_path(channel: ch), class: "btn btn-default btn-sm #{params[:channel] == ch ? 'active' : ''}" %>
+  <% end %>
+</div>
+
+<div class="table-responsive">
+  <table class="table table-hover">
+    <thead>
+      <tr><th>Campaign</th><th>Client</th><th>Channel</th><th>Status</th><th>Budget</th><th>Spent</th><th>Impressions</th><th>Clicks</th><th>Conv.</th><th>Revenue</th><th>ROI</th></tr>
+    </thead>
+    <tbody>
+      <% @campaigns.each do |c| %>
+        <tr>
+          <td><%= link_to c.name, campaign_path(c) %></td>
+          <td><%= link_to c.client&.company_name, client_path(c.client) if c.client %></td>
+          <td><i class="fa fa-<%= c.channel_icon %>"></i> <%= c.channel&.upcase %></td>
+          <td><%= status_badge(c.status, c.status_color) %></td>
+          <td><%= number_to_currency(c.budget) %></td>
+          <td><%= number_to_currency(c.spent) %></td>
+          <td><%= short_number(c.impressions) %></td>
+          <td><%= short_number(c.clicks) %></td>
+          <td><%= c.conversions %></td>
+          <td class="text-success"><%= number_to_currency(c.revenue) %></td>
+          <td><span class="label label-<%= c.roi >= 0 ? 'success' : 'danger' %>"><%= c.roi %>%</span></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

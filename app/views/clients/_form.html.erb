@@ -1,0 +1,101 @@
+<%= form_for @client do |f| %>
+  <% if @client.errors.any? %>
+    <div class="alert alert-danger">
+      <% @client.errors.full_messages.each do |msg| %><p><%= msg %></p><% end %>
+    </div>
+  <% end %>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="form-group">
+        <label>Company Name *</label>
+        <%= f.text_field :company_name, class: 'form-control' %>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="form-group">
+        <label>Industry</label>
+        <%= f.text_field :industry, class: 'form-control' %>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="form-group">
+        <label>Status</label>
+        <%= f.select :status, Client::STATUSES.map { |s| [s.titleize, s] }, {}, class: 'form-control' %>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-4">
+      <div class="form-group">
+        <label>Contact Name</label>
+        <%= f.text_field :contact_name, class: 'form-control' %>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="form-group">
+        <label>Contact Email</label>
+        <%= f.email_field :contact_email, class: 'form-control' %>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="form-group">
+        <label>Contact Phone</label>
+        <%= f.text_field :contact_phone, class: 'form-control' %>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-4">
+      <div class="form-group">
+        <label>Website</label>
+        <%= f.text_field :website, class: 'form-control', placeholder: 'https://' %>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="form-group">
+        <label>Monthly Retainer</label>
+        <div class="input-group">
+          <span class="input-group-addon">$</span>
+          <%= f.number_field :monthly_retainer, class: 'form-control', step: '0.01' %>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="form-group">
+        <label>Account Manager</label>
+        <%= f.collection_select :account_manager_id, User.all.order(:first_name), :id, :full_name, { include_blank: '-- Select --' }, class: 'form-control' %>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-4">
+      <div class="form-group">
+        <label>Contract Start</label>
+        <%= f.date_field :contract_start_date, class: 'form-control' %>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="form-group">
+        <label>Contract End</label>
+        <%= f.date_field :contract_end_date, class: 'form-control' %>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>Address</label>
+    <%= f.text_area :address, class: 'form-control', rows: 2 %>
+  </div>
+
+  <div class="form-group">
+    <label>Notes</label>
+    <%= f.text_area :notes, class: 'form-control', rows: 3 %>
+  </div>
+
+  <%= f.submit class: 'btn btn-primary' %>
+  <%= link_to 'Cancel', clients_path, class: 'btn btn-default' %>
+<% end %>

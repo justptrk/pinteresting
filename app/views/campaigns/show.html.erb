@@ -1,0 +1,118 @@
+<div class="row">
+  <div class="col-md-8">
+    <h2><i class="fa fa-<%= @campaign.channel_icon %>"></i> <%= @campaign.name %>
+      <%= status_badge(@campaign.status, @campaign.status_color) %>
+    </h2>
+    <p class="text-muted">
+      Client: <%= link_to @campaign.client&.company_name, client_path(@campaign.client) if @campaign.client %> |
+      Channel: <strong><%= @campaign.channel&.upcase %></strong> |
+      <%= @campaign.start_date&.strftime('%b %d') %> - <%= @campaign.end_date&.strftime('%b %d, %Y') %>
+    </p>
+  </div>
+  <div class="col-md-4 text-right" style="padding-top: 20px;">
+    <%= link_to raw('<i class="fa fa-edit"></i> Edit'), edit_campaign_path(@campaign), class: 'btn btn-default' %>
+    <%= link_to raw('<i class="fa fa-plus"></i> Content'), new_content_item_path(campaign_id: @campaign.id), class: 'btn btn-info' %>
+  </div>
+</div>
+<hr>
+
+<!-- Campaign Metrics -->
+<div class="row">
+  <div class="col-md-2">
+    <div class="panel panel-default text-center">
+      <div class="panel-body">
+        <h3 style="margin:0;"><%= number_to_currency(@campaign.budget, precision: 0) %></h3>
+        <small class="text-muted">Budget</small>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-2">
+    <div class="panel panel-default text-center">
+      <div class="panel-body">
+        <h3 style="margin:0;"><%= number_to_currency(@campaign.spent, precision: 0) %></h3>
+        <small class="text-muted">Spent (<%= @campaign.budget_utilization %>%)</small>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-2">
+    <div class="panel panel-default text-center">
+      <div class="panel-body">
+        <h3 style="margin:0;"><%= short_number(@campaign.impressions) %></h3>
+        <small class="text-muted">Impressions</small>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-2">
+    <div class="panel panel-default text-center">
+      <div class="panel-body">
+        <h3 style="margin:0;"><%= short_number(@campaign.clicks) %></h3>
+        <small class="text-muted">Clicks (<%= @campaign.conversion_rate %>% CTR)</small>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-2">
+    <div class="panel panel-success text-center">
+      <div class="panel-body">
+        <h3 style="margin:0;"><%= number_to_currency(@campaign.revenue, precision: 0) %></h3>
+        <small class="text-muted">Revenue</small>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-2">
+    <div class="panel panel-<%= @campaign.roi >= 0 ? 'success' : 'danger' %> text-center">
+      <div class="panel-body">
+        <h3 style="margin:0;"><%= @campaign.roi %>%</h3>
+        <small>ROI</small>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Budget Progress -->
+<div class="row">
+  <div class="col-md-12">
+    <label>Budget Utilization</label>
+    <%= percentage_bar(@campaign.budget_utilization, 100, @campaign.budget_utilization > 90 ? 'danger' : 'info') %>
+  </div>
+</div>
+
+<% if @campaign.objective.present? %>
+  <div class="well"><strong>Objective:</strong> <%= @campaign.objective %></div>
+<% end %>
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="panel panel-default">
+      <div class="panel-heading"><h4 style="margin:0;">Content</h4></div>
+      <table class="table">
+        <% @content_items.each do |ci| %>
+          <tr>
+            <td><%= link_to ci.title, content_item_path(ci) %></td>
+            <td><%= ci.platform&.titleize %></td>
+            <td><%= status_badge(ci.status, ci.status_color) %></td>
+          </tr>
+        <% end %>
+        <% if @content_items.empty? %>
+          <tr><td class="text-muted">No content yet</td></tr>
+        <% end %>
+      </table>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="panel panel-default">
+      <div class="panel-heading"><h4 style="margin:0;">Leads Generated</h4></div>
+      <table class="table">
+        <% @leads.each do |lead| %>
+          <tr>
+            <td><%= link_to lead.name, lead_path(lead) %></td>
+            <td><%= status_badge(lead.stage, lead.stage_color) %></td>
+            <td><%= number_to_currency(lead.value) %></td>
+          </tr>
+        <% end %>
+        <% if @leads.empty? %>
+          <tr><td class="text-muted">No leads yet</td></tr>
+        <% end %>
+      </table>
+    </div>
+  </div>
+</div>

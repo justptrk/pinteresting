@@ -1,0 +1,137 @@
+// MarketPro Custom Styles
+
+body {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  background-color: #f4f5f7;
+  color: #333;
+}
+
+// Navbar
+.navbar-inverse {
+  background-color: #1a1a2e;
+  border-color: #16213e;
+
+  .navbar-brand {
+    font-weight: 700;
+    font-size: 20px;
+    color: #fff !important;
+    letter-spacing: 1px;
+  }
+
+  .navbar-nav > li > a {
+    color: rgba(255, 255, 255, 0.8) !important;
+
+    &:hover {
+      color: #fff !important;
+      background-color: rgba(255, 255, 255, 0.1) !important;
+    }
+  }
+
+  .navbar-nav > .active > a {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    color: #fff !important;
+  }
+}
+
+// Panels
+.panel {
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e3e6ea;
+}
+
+.panel-heading {
+  border-radius: 4px 4px 0 0;
+}
+
+// Tables
+.table > thead > tr > th {
+  border-bottom: 2px solid #ddd;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  color: #999;
+}
+
+.table-hover > tbody > tr:hover {
+  background-color: #f8f9fa;
+}
+
+// Labels/Badges
+.label {
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 3px;
+  font-size: 11px;
+}
+
+// Progress bars
+.progress {
+  height: 20px;
+  border-radius: 3px;
+  background-color: #e9ecef;
+  margin-bottom: 0;
+}
+
+.progress-bar {
+  line-height: 20px;
+  font-size: 11px;
+}
+
+// Buttons
+.btn-primary {
+  background-color: #0f3460;
+  border-color: #0f3460;
+
+  &:hover, &:focus {
+    background-color: #1a4a8a;
+    border-color: #1a4a8a;
+  }
+}
+
+// Cards / KPI Panels
+.panel-primary > .panel-body,
+.panel-success > .panel-body,
+.panel-info > .panel-body,
+.panel-warning > .panel-body {
+  h1, h3 {
+    font-weight: 700;
+  }
+}
+
+// Quick action buttons
+.btn-group .btn {
+  border-radius: 3px;
+  margin-right: 2px;
+}
+
+// Form improvements
+.form-control {
+  border-radius: 3px;
+  border-color: #d1d5db;
+
+  &:focus {
+    border-color: #0f3460;
+    box-shadow: 0 0 0 2px rgba(15, 52, 96, 0.1);
+  }
+}
+
+// Alert improvements
+.alert {
+  border-radius: 4px;
+}
+
+// Footer
+footer {
+  font-size: 13px;
+}
+
+// Pipeline cards
+.pipeline-card {
+  border-left: 3px solid #0f3460;
+  margin-bottom: 8px;
+  padding: 10px;
+  background: white;
+  border-radius: 0 4px 4px 0;
+}

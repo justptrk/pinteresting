@@ -1,0 +1,39 @@
+<div class="row" style="margin-bottom: 20px;">
+  <div class="col-md-6">
+    <h2><i class="fa fa-columns"></i> Lead Pipeline</h2>
+  </div>
+  <div class="col-md-6 text-right" style="padding-top: 20px;">
+    <%= link_to raw('<i class="fa fa-list"></i> List View'), leads_path, class: 'btn btn-default' %>
+    <%= link_to raw('<i class="fa fa-plus"></i> New Lead'), new_lead_path, class: 'btn btn-primary' %>
+  </div>
+</div>
+
+<div class="row" style="overflow-x: auto; white-space: nowrap;">
+  <% Lead::STAGES.each do |stage| %>
+    <div class="col-md-2" style="display: inline-block; float: none; vertical-align: top; min-width: 200px;">
+      <div class="panel panel-default">
+        <div class="panel-heading text-center" style="background: <%= stage == 'won' ? '#dff0d8' : (stage == 'lost' ? '#f2dede' : '#f5f5f5') %>;">
+          <strong><%= stage.titleize %></strong>
+          <span class="badge"><%= @leads_by_stage[stage]&.count || 0 %></span>
+        </div>
+        <div class="panel-body" style="min-height: 300px; padding: 5px;">
+          <% (@leads_by_stage[stage] || []).each do |lead| %>
+            <div class="panel panel-default" style="margin-bottom: 8px;">
+              <div class="panel-body" style="padding: 10px;">
+                <strong><%= link_to lead.name, lead_path(lead) %></strong>
+                <% if lead.value && lead.value > 0 %>
+                  <span class="pull-right text-success"><%= number_to_currency(lead.value, precision: 0) %></span>
+                <% end %>
+                <br>
+                <small class="text-muted"><%= lead.company %></small>
+                <% if lead.assigned_to %>
+                  <br><small><i class="fa fa-user"></i> <%= lead.assigned_to.full_name %></small>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

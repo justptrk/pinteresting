@@ -1,0 +1,68 @@
+<div class="row">
+  <div class="col-md-8">
+    <h2><i class="fa fa-user"></i> <%= @lead.name %>
+      <%= status_badge(@lead.stage, @lead.stage_color) %>
+    </h2>
+    <p class="text-muted">
+      <%= @lead.company %> | Source: <strong><%= @lead.source&.titleize %></strong>
+      <% if @lead.client %>
+        | Client: <%= link_to @lead.client.company_name, client_path(@lead.client) %>
+      <% end %>
+    </p>
+  </div>
+  <div class="col-md-4 text-right" style="padding-top: 20px;">
+    <% if @lead.active? %>
+      <%= link_to raw('<i class="fa fa-arrow-right"></i> Advance Stage'), advance_lead_path(@lead), method: :patch, class: 'btn btn-success' %>
+    <% end %>
+    <%= link_to raw('<i class="fa fa-edit"></i> Edit'), edit_lead_path(@lead), class: 'btn btn-default' %>
+  </div>
+</div>
+<hr>
+
+<!-- Stage Progress -->
+<div class="row" style="margin-bottom: 20px;">
+  <div class="col-md-12">
+    <div class="progress" style="height: 30px;">
+      <div class="progress-bar progress-bar-<%= @lead.stage == 'won' ? 'success' : (@lead.stage == 'lost' ? 'danger' : 'info') %>"
+           style="width: <%= @lead.stage_percentage %>%; line-height: 30px; font-size: 14px;">
+        <%= @lead.stage.titleize %> (<%= @lead.stage_percentage %>%)
+      </div>
+    </div>
+    <div class="text-center">
+      <% Lead::STAGES.each_with_index do |stage, i| %>
+        <span class="<%= stage == @lead.stage ? 'text-primary' : 'text-muted' %>" style="margin: 0 8px; font-size: 12px;">
+          <%= stage.titleize %>
+        </span>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="panel panel-default">
+      <div class="panel-heading"><h4 style="margin:0;">Lead Details</h4></div>
+      <div class="panel-body">
+        <p><i class="fa fa-envelope"></i> <%= @lead.email || 'No email' %></p>
+        <p><i class="fa fa-phone"></i> <%= @lead.phone || 'No phone' %></p>
+        <p><i class="fa fa-building"></i> <%= @lead.company || 'No company' %></p>
+        <p><strong>Value:</strong> <%= number_to_currency(@lead.value) %></p>
+        <p><strong>Score:</strong> <%= @lead.score %> / 100</p>
+        <p><strong>Expected Close:</strong> <%= @lead.expected_close_date&.strftime('%B %d, %Y') || 'Not set' %></p>
+        <p><strong>Assigned To:</strong> <%= @lead.assigned_to&.full_name || 'Unassigned' %></p>
+        <% if @lead.campaign %>
+          <p><strong>Campaign:</strong> <%= link_to @lead.campaign.name, campaign_path(@lead.campaign) %></p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="panel panel-default">
+      <div class="panel-heading"><h4 style="margin:0;">Notes</h4></div>
+      <div class="panel-body">
+        <%= simple_format(@lead.notes) if @lead.notes.present? %>
+        <p class="text-muted" if @lead.notes.blank?>No notes yet.</p>
+      </div>
+    </div>
+  </div>
+</div>

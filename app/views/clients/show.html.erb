@@ -1,0 +1,126 @@
+<div class="row">
+  <div class="col-md-8">
+    <h2>
+      <i class="fa fa-building"></i> <%= @client.company_name %>
+      <%= status_badge(@client.status, @client.status_color) %>
+    </h2>
+  </div>
+  <div class="col-md-4 text-right" style="padding-top: 20px;">
+    <%= link_to raw('<i class="fa fa-edit"></i> Edit'), edit_client_path(@client), class: 'btn btn-default' %>
+    <%= link_to raw('<i class="fa fa-plus"></i> Campaign'), new_campaign_path(client_id: @client.id), class: 'btn btn-success' %>
+    <%= link_to raw('<i class="fa fa-plus"></i> Task'), new_task_path(client_id: @client.id), class: 'btn btn-info' %>
+  </div>
+</div>
+<hr>
+
+<!-- Client KPIs -->
+<div class="row">
+  <div class="col-md-3">
+    <div class="panel panel-default text-center">
+      <div class="panel-body">
+        <h3 style="margin: 0;"><%= number_to_currency(@client.monthly_retainer) %></h3>
+        <small class="text-muted">Monthly Retainer</small>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="panel panel-default text-center">
+      <div class="panel-body">
+        <h3 style="margin: 0;"><%= number_to_currency(@total_revenue) %></h3>
+        <small class="text-muted">Total Revenue</small>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="panel panel-default text-center">
+      <div class="panel-body">
+        <h3 style="margin: 0;"><%= @client.active_campaigns_count %></h3>
+        <small class="text-muted">Active Campaigns</small>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="panel panel-default text-center">
+      <div class="panel-body">
+        <h3 style="margin: 0;"><%= @client.won_leads %> / <%= @client.total_leads %></h3>
+        <small class="text-muted">Won / Total Leads</small>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Client Details -->
+<div class="row">
+  <div class="col-md-4">
+    <div class="panel panel-default">
+      <div class="panel-heading"><h4 style="margin: 0;">Contact Info</h4></div>
+      <div class="panel-body">
+        <p><strong>Contact:</strong> <%= @client.contact_name %></p>
+        <p><i class="fa fa-envelope"></i> <%= @client.contact_email %></p>
+        <p><i class="fa fa-phone"></i> <%= @client.contact_phone %></p>
+        <p><i class="fa fa-globe"></i> <%= @client.website %></p>
+        <p><i class="fa fa-user"></i> <strong>Account Manager:</strong> <%= @client.account_manager&.full_name || 'Unassigned' %></p>
+        <% if @client.contract_start_date %>
+          <p><i class="fa fa-calendar"></i> Contract: <%= @client.contract_start_date.strftime('%b %d, %Y') %> - <%= @client.contract_end_date&.strftime('%b %d, %Y') || 'Ongoing' %></p>
+        <% end %>
+        <% if @client.notes.present? %>
+          <hr>
+          <p><%= simple_format(@client.notes) %></p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-8">
+    <!-- Campaigns -->
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 style="margin: 0;">Campaigns
+          <span class="pull-right"><%= link_to raw('<i class="fa fa-plus"></i>'), new_campaign_path(client_id: @client.id), class: 'btn btn-xs btn-success' %></span>
+        </h4>
+      </div>
+      <table class="table table-hover">
+        <thead><tr><th>Name</th><th>Channel</th><th>Status</th><th>Budget</th><th>Revenue</th><th>ROI</th></tr></thead>
+        <tbody>
+          <% @campaigns.each do |c| %>
+            <tr>
+              <td><%= link_to c.name, campaign_path(c) %></td>
+              <td><i class="fa fa-<%= c.channel_icon %>"></i> <%= c.channel&.upcase %></td>
+              <td><%= status_badge(c.status, c.status_color) %></td>
+              <td><%= number_to_currency(c.budget) %></td>
+              <td><%= number_to_currency(c.revenue) %></td>
+              <td><%= c.roi %>%</td>
+            </tr>
+          <% end %>
+          <% if @campaigns.empty? %>
+            <tr><td colspan="6" class="text-muted text-center">No campaigns yet</td></tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Active Tasks -->
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 style="margin: 0;">Active Tasks
+          <span class="pull-right"><%= link_to raw('<i class="fa fa-plus"></i>'), new_task_path(client_id: @client.id), class: 'btn btn-xs btn-info' %></span>
+        </h4>
+      </div>
+      <table class="table">
+        <tbody>
+          <% @tasks.each do |task| %>
+            <tr>
+              <td><%= link_to task.title, task_path(task) %></td>
+              <td><span class="label label-<%= task.priority_color %>"><%= task.priority.titleize %></span></td>
+              <td><%= status_badge(task.status, task.status_color) %></td>
+              <td><%= task.due_date&.strftime('%b %d') %></td>
+            </tr>
+          <% end %>
+          <% if @tasks.empty? %>
+            <tr><td class="text-muted">No active tasks</td></tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -1,15 +1,91 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Pinteresting</title>
-  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  <title>MarketPro - Digital Marketing Platform</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track' => true %>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   <%= csrf_meta_tags %>
 </head>
 <body>
-	<%= link_to "Home", root_path %>
-	<%= link_to "About us", about_path %>
-<%= yield %>
+  <nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <%= link_to 'MarketPro', root_path, class: 'navbar-brand' %>
+      </div>
+      <div id="navbar" class="navbar-collapse collapse">
+        <% if signed_in? %>
+          <ul class="nav navbar-nav">
+            <li class="<%= 'active' if controller_name == 'dashboard' %>">
+              <%= link_to raw('<i class="fa fa-dashboard"></i> Dashboard'), dashboard_path %>
+            </li>
+            <li class="<%= 'active' if controller_name == 'clients' %>">
+              <%= link_to raw('<i class="fa fa-building"></i> Clients'), clients_path %>
+            </li>
+            <li class="<%= 'active' if controller_name == 'campaigns' %>">
+              <%= link_to raw('<i class="fa fa-bullhorn"></i> Campaigns'), campaigns_path %>
+            </li>
+            <li class="<%= 'active' if controller_name == 'content_items' %>">
+              <%= link_to raw('<i class="fa fa-calendar"></i> Content'), content_items_path %>
+            </li>
+            <li class="<%= 'active' if controller_name == 'leads' %>">
+              <%= link_to raw('<i class="fa fa-users"></i> Leads'), leads_path %>
+            </li>
+            <li class="<%= 'active' if controller_name == 'tasks' %>">
+              <%= link_to raw('<i class="fa fa-tasks"></i> Tasks'), tasks_path %>
+            </li>
+            <li class="<%= 'active' if controller_name == 'reports' %>">
+              <%= link_to raw('<i class="fa fa-bar-chart"></i> Reports'), reports_path %>
+            </li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                <i class="fa fa-user"></i> <%= current_user.full_name %> <span class="caret"></span>
+              </a>
+              <ul class="dropdown-menu">
+                <li><%= link_to raw('<i class="fa fa-user"></i> Profile'), user_path(current_user) %></li>
+                <% if current_user.admin? %>
+                  <li><%= link_to raw('<i class="fa fa-cog"></i> Team'), users_path %></li>
+                <% end %>
+                <li class="divider"></li>
+                <li><%= link_to raw('<i class="fa fa-sign-out"></i> Sign Out'), sign_out_path, method: :delete %></li>
+              </ul>
+            </li>
+          </ul>
+        <% else %>
+          <ul class="nav navbar-nav navbar-right">
+            <li><%= link_to 'Sign In', sign_in_path %></li>
+            <li><%= link_to 'Sign Up', sign_up_path %></li>
+          </ul>
+        <% end %>
+      </div>
+    </div>
+  </nav>
 
+  <div class="<%= signed_in? ? 'container-fluid' : 'container' %>" style="padding-top: 70px;">
+    <% flash.each do |key, message| %>
+      <div class="alert <%= flash_class(key) %> alert-dismissible fade in" role="alert">
+        <button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
+        <%= message %>
+      </div>
+    <% end %>
+    <%= yield %>
+  </div>
+
+  <footer style="margin-top: 40px; padding: 20px 0; border-top: 1px solid #e7e7e7; color: #777; text-align: center;">
+    <div class="container-fluid">
+      <p>&copy; <%= Date.current.year %> MarketPro Digital Marketing Platform</p>
+    </div>
+  </footer>
 </body>
 </html>

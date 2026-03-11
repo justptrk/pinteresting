@@ -1,0 +1,48 @@
+<div class="row">
+  <div class="col-md-8">
+    <h2><i class="fa fa-<%= @content_item.platform_icon %>"></i> <%= @content_item.title %>
+      <%= status_badge(@content_item.status, @content_item.status_color) %>
+    </h2>
+    <p class="text-muted">
+      <%= @content_item.content_type_label %> |
+      Platform: <strong><%= @content_item.platform&.titleize %></strong> |
+      Client: <%= link_to @content_item.client&.company_name, client_path(@content_item.client) if @content_item.client %>
+    </p>
+  </div>
+  <div class="col-md-4 text-right" style="padding-top: 20px;">
+    <%= link_to raw('<i class="fa fa-edit"></i> Edit'), edit_content_item_path(@content_item), class: 'btn btn-default' %>
+  </div>
+</div>
+<hr>
+
+<div class="row">
+  <div class="col-md-8">
+    <div class="panel panel-default">
+      <div class="panel-heading"><h4 style="margin:0;">Content</h4></div>
+      <div class="panel-body">
+        <%= simple_format(@content_item.body) if @content_item.body.present? %>
+        <p class="text-muted" if @content_item.body.blank?>No content body yet.</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="panel panel-default">
+      <div class="panel-heading"><h4 style="margin:0;">Details</h4></div>
+      <div class="panel-body">
+        <p><strong>Assigned To:</strong> <%= @content_item.assigned_to&.full_name || 'Unassigned' %></p>
+        <p><strong>Campaign:</strong> <%= link_to @content_item.campaign&.name, campaign_path(@content_item.campaign) if @content_item.campaign %></p>
+        <% if @content_item.scheduled_at %>
+          <p><strong>Scheduled:</strong> <%= @content_item.scheduled_at.strftime('%B %d, %Y at %I:%M %p') %></p>
+        <% end %>
+        <% if @content_item.published_at %>
+          <p><strong>Published:</strong> <%= @content_item.published_at.strftime('%B %d, %Y at %I:%M %p') %></p>
+        <% end %>
+        <% if @content_item.notes.present? %>
+          <hr>
+          <p><strong>Notes:</strong></p>
+          <%= simple_format(@content_item.notes) %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,38 @@
+<div class="row" style="margin-bottom: 20px;">
+  <div class="col-md-6">
+    <h2><i class="fa fa-users"></i> Leads
+      <small class="text-muted">Pipeline: <strong><%= number_to_currency(@total_pipeline_value, precision: 0) %></strong> | Won: <strong class="text-success"><%= number_to_currency(@won_value, precision: 0) %></strong></small>
+    </h2>
+  </div>
+  <div class="col-md-6 text-right" style="padding-top: 20px;">
+    <%= link_to raw('<i class="fa fa-columns"></i> Pipeline View'), pipeline_leads_path, class: 'btn btn-default' %>
+    <%= link_to raw('<i class="fa fa-plus"></i> New Lead'), new_lead_path, class: 'btn btn-primary' %>
+  </div>
+</div>
+
+<div class="btn-group" style="margin-bottom: 15px;">
+  <%= link_to 'All', leads_path, class: "btn btn-default btn-sm #{params[:stage].blank? ? 'active' : ''}" %>
+  <% Lead::STAGES.each do |s| %>
+    <%= link_to s.titleize, leads_path(stage: s), class: "btn btn-default btn-sm #{params[:stage] == s ? 'active' : ''}" %>
+  <% end %>
+</div>
+
+<div class="table-responsive">
+  <table class="table table-hover">
+    <thead><tr><th>Name</th><th>Company</th><th>Source</th><th>Stage</th><th>Value</th><th>Score</th><th>Assigned</th><th>Expected Close</th></tr></thead>
+    <tbody>
+      <% @leads.each do |lead| %>
+        <tr>
+          <td><%= link_to lead.name, lead_path(lead) %></td>
+          <td><%= lead.company %></td>
+          <td><%= lead.source&.titleize %></td>
+          <td><%= status_badge(lead.stage, lead.stage_color) %></td>
+          <td><%= number_to_currency(lead.value) %></td>
+          <td><%= lead.score %></td>
+          <td><%= lead.assigned_to&.full_name %></td>
+          <td><%= lead.expected_close_date&.strftime('%b %d, %Y') %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

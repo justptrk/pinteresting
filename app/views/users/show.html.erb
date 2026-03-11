@@ -1,0 +1,37 @@
+<div class="row" style="margin-top: 20px;">
+  <div class="col-md-4">
+    <div class="panel panel-default">
+      <div class="panel-body text-center">
+        <div style="width: 80px; height: 80px; border-radius: 50%; background: #0f3460; color: white; font-size: 32px; line-height: 80px; margin: 0 auto 15px;">
+          <%= @user.initials %>
+        </div>
+        <h3><%= @user.full_name %></h3>
+        <p class="text-muted"><%= @user.title %></p>
+        <span class="label label-primary"><%= @user.role.titleize %></span>
+        <hr>
+        <p><i class="fa fa-envelope"></i> <%= @user.email %></p>
+        <p><i class="fa fa-phone"></i> <%= @user.phone || 'Not set' %></p>
+        <% if @user == current_user %>
+          <%= link_to 'Edit Profile', edit_user_path(@user), class: 'btn btn-default btn-block' %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-8">
+    <div class="panel panel-default">
+      <div class="panel-heading"><h4>Active Tasks</h4></div>
+      <table class="table">
+        <% @recent_tasks.each do |task| %>
+          <tr>
+            <td><%= link_to task.title, task_path(task) %></td>
+            <td><%= status_badge(task.status, task.status_color) %></td>
+            <td><%= task.due_date&.strftime('%b %d') %></td>
+          </tr>
+        <% end %>
+        <% if @recent_tasks.empty? %>
+          <tr><td class="text-muted">No active tasks</td></tr>
+        <% end %>
+      </table>
+    </div>
+  </div>
+</div>
