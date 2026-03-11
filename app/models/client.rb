@@ -1,5 +1,5 @@
 class Client < ActiveRecord::Base
-  belongs_to :account_manager, class_name: 'User'
+  belongs_to :account_manager, optional: true, class_name: 'User'
   has_many :campaigns, dependent: :destroy
   has_many :content_items, dependent: :destroy
   has_many :leads, dependent: :destroy

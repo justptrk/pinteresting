@@ -1,6 +1,6 @@
 class Campaign < ActiveRecord::Base
   belongs_to :client
-  belongs_to :created_by, class_name: 'User'
+  belongs_to :created_by, optional: true, class_name: 'User'
   has_many :content_items, dependent: :destroy
   has_many :leads, dependent: :nullify
   has_many :tasks, dependent: :destroy
