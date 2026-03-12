@@ -1,14 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>MarketPro - Digital Marketing Platform</title>
+  <title>Pajo Digital Marketing</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#222222">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Pajo">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+  <link rel="apple-touch-icon" href="/icon-192.png">
   <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track' => true %>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   <%= csrf_meta_tags %>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/service-worker.js');
+    }
+  </script>
 </head>
 <body>
   <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -84,7 +95,7 @@
 
   <footer style="margin-top: 40px; padding: 20px 0; border-top: 1px solid #e7e7e7; color: #777; text-align: center;">
     <div class="container-fluid">
-      <p>&copy; <%= Date.current.year %> MarketPro Digital Marketing Platform</p>
+      <p>&copy; <%= Date.current.year %> Pajo Digital Marketing</p>
     </div>
   </footer>
 </body>
