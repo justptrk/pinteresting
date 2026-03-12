@@ -15,7 +15,7 @@ class UsersController < ApplicationController
     @user = User.new(user_params)
     if @user.save
       cookies.permanent[:remember_token] = @user.remember_token
-      flash[:success] = "Welcome to MarketPro! Your account has been created."
+      flash[:success] = "Welcome to Pajo! Your account has been created."
       redirect_to dashboard_path
     else
       render :new
