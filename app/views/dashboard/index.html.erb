@@ -1,0 +1,217 @@
+<!-- KPI Overview Row -->
+<div class="kpi-row" id="kpi-row">
+  <div class="kpi-card">
+    <div class="kpi-label">REVENUE MTD</div>
+    <div class="kpi-value cyan" id="kpi-revenue">$0</div>
+    <div class="kpi-sub">Target: $650,000</div>
+    <div class="kpi-bar"><div class="kpi-bar-fill cyan" id="kpi-revenue-bar" style="width: 0%"></div></div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">PLACEMENTS MTD</div>
+    <div class="kpi-value green" id="kpi-placements">0</div>
+    <div class="kpi-sub">Target: 22</div>
+    <div class="kpi-bar"><div class="kpi-bar-fill green" id="kpi-placements-bar" style="width: 0%"></div></div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">ACTIVE CLIENTS</div>
+    <div class="kpi-value amber" id="kpi-clients">0</div>
+    <div class="kpi-sub">Interviews: <span id="kpi-interviews">0</span></div>
+    <div class="kpi-bar"><div class="kpi-bar-fill amber" style="width: 70%"></div></div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">TEAM UTILIZATION</div>
+    <div class="kpi-value blue" id="kpi-utilization">0%</div>
+    <div class="kpi-sub">NPS Score: <span id="kpi-nps">0</span></div>
+    <div class="kpi-bar"><div class="kpi-bar-fill blue" id="kpi-util-bar" style="width: 0%"></div></div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">OFFERS PENDING</div>
+    <div class="kpi-value purple" id="kpi-offers">0</div>
+    <div class="kpi-sub">Active Candidates: <span id="kpi-candidates">0</span></div>
+    <div class="kpi-bar"><div class="kpi-bar-fill purple" style="width: 45%"></div></div>
+  </div>
+</div>
+
+<!-- Main Panel Grid: Row 1 - Cloudtalk, Manatal, Apollo -->
+<div class="panel-grid">
+
+  <!-- CLOUDTALK PANEL -->
+  <div class="dash-panel" id="panel-cloudtalk">
+    <div class="panel-header">
+      <div class="panel-title">
+        <div class="panel-icon">&#9742;</div>
+        <span class="panel-name">CLOUDTALK</span>
+      </div>
+      <span class="panel-status connected">LIVE</span>
+    </div>
+    <div class="panel-body">
+      <div class="stat-grid" id="cloudtalk-stats">
+        <div class="stat-mini">
+          <div class="stat-mini-value" style="color: #22d3ee" id="ct-calls">--</div>
+          <div class="stat-mini-label">CALLS TODAY</div>
+        </div>
+        <div class="stat-mini">
+          <div class="stat-mini-value" style="color: #10b981" id="ct-avg">--</div>
+          <div class="stat-mini-label">AVG DURATION</div>
+        </div>
+        <div class="stat-mini">
+          <div class="stat-mini-value" style="color: #f59e0b" id="ct-queue">--</div>
+          <div class="stat-mini-label">IN QUEUE</div>
+        </div>
+      </div>
+
+      <div class="hex-divider">CALL VOLUME</div>
+      <div class="bar-chart" id="ct-chart"></div>
+
+      <div class="hex-divider">RECENT ACTIVITY</div>
+      <ul class="activity-list" id="ct-activity"></ul>
+    </div>
+  </div>
+
+  <!-- MANATAL PANEL -->
+  <div class="dash-panel" id="panel-manatal">
+    <div class="panel-header">
+      <div class="panel-title">
+        <div class="panel-icon">&#9783;</div>
+        <span class="panel-name">MANATAL ATS</span>
+      </div>
+      <span class="panel-status connected">SYNCED</span>
+    </div>
+    <div class="panel-body">
+      <div class="stat-grid" id="manatal-stats">
+        <div class="stat-mini">
+          <div class="stat-mini-value" style="color: #a855f7" id="mn-positions">--</div>
+          <div class="stat-mini-label">OPEN ROLES</div>
+        </div>
+        <div class="stat-mini">
+          <div class="stat-mini-value" style="color: #22d3ee" id="mn-candidates">--</div>
+          <div class="stat-mini-label">CANDIDATES</div>
+        </div>
+        <div class="stat-mini">
+          <div class="stat-mini-value" style="color: #10b981" id="mn-ttf">--</div>
+          <div class="stat-mini-label">AVG TTF (DAYS)</div>
+        </div>
+      </div>
+
+      <div class="hex-divider">PIPELINE FUNNEL</div>
+      <div class="funnel-container" id="mn-funnel"></div>
+
+      <div class="hex-divider">TOP CANDIDATES</div>
+      <ul class="activity-list" id="mn-candidates-list"></ul>
+    </div>
+  </div>
+
+  <!-- APOLLO.IO PANEL -->
+  <div class="dash-panel" id="panel-apollo">
+    <div class="panel-header">
+      <div class="panel-title">
+        <div class="panel-icon">&#9790;</div>
+        <span class="panel-name">APOLLO.IO</span>
+      </div>
+      <span class="panel-status connected">ACTIVE</span>
+    </div>
+    <div class="panel-body">
+      <div class="stat-grid" id="apollo-stats">
+        <div class="stat-mini">
+          <div class="stat-mini-value" style="color: #3b82f6" id="ap-sequences">--</div>
+          <div class="stat-mini-label">SEQUENCES</div>
+        </div>
+        <div class="stat-mini">
+          <div class="stat-mini-value" style="color: #22d3ee" id="ap-sent">--</div>
+          <div class="stat-mini-label">SENT TODAY</div>
+        </div>
+        <div class="stat-mini">
+          <div class="stat-mini-value" style="color: #10b981" id="ap-response">--</div>
+          <div class="stat-mini-label">RESPONSE RATE</div>
+        </div>
+      </div>
+
+      <div class="hex-divider">OUTREACH VOLUME (7D)</div>
+      <div class="bar-chart" id="ap-chart"></div>
+
+      <div class="hex-divider">TOP SEQUENCES</div>
+      <table class="seq-table" id="ap-sequences-table">
+        <thead>
+          <tr>
+            <th>Sequence</th>
+            <th>Sent</th>
+            <th>Opened</th>
+            <th>Replied</th>
+            <th>Mtgs</th>
+          </tr>
+        </thead>
+        <tbody id="ap-seq-body"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Row 2: Pipeline CRM + Gmail -->
+<div class="panel-grid-2">
+
+  <!-- PIPELINE CRM PANEL -->
+  <div class="dash-panel" id="panel-pipeline">
+    <div class="panel-header">
+      <div class="panel-title">
+        <div class="panel-icon">&#9733;</div>
+        <span class="panel-name">PIPELINE CRM</span>
+      </div>
+      <span class="panel-status connected">LIVE</span>
+    </div>
+    <div class="panel-body">
+      <div class="stat-grid" id="pipeline-stats">
+        <div class="stat-mini">
+          <div class="stat-mini-value" style="color: #10b981" id="pl-deals">--</div>
+          <div class="stat-mini-label">TOTAL DEALS</div>
+        </div>
+        <div class="stat-mini">
+          <div class="stat-mini-value" style="color: #22d3ee" id="pl-value">--</div>
+          <div class="stat-mini-label">TOTAL VALUE</div>
+        </div>
+        <div class="stat-mini">
+          <div class="stat-mini-value" style="color: #f59e0b" id="pl-winrate">--</div>
+          <div class="stat-mini-label">WIN RATE</div>
+        </div>
+      </div>
+
+      <div class="hex-divider">DEAL STAGES</div>
+      <div class="funnel-container" id="pl-funnel"></div>
+
+      <div class="hex-divider">RECENT DEALS</div>
+      <div id="pl-deals-list"></div>
+    </div>
+  </div>
+
+  <!-- GMAIL PANEL -->
+  <div class="dash-panel" id="panel-gmail">
+    <div class="panel-header">
+      <div class="panel-title">
+        <div class="panel-icon">&#9993;</div>
+        <span class="panel-name">GMAIL</span>
+      </div>
+      <span class="panel-status connected">CONNECTED</span>
+    </div>
+    <div class="panel-body">
+      <div class="stat-grid" id="gmail-stats">
+        <div class="stat-mini">
+          <div class="stat-mini-value" style="color: #ef4444" id="gm-unread">--</div>
+          <div class="stat-mini-label">UNREAD</div>
+        </div>
+        <div class="stat-mini">
+          <div class="stat-mini-value" style="color: #3b82f6" id="gm-sent">--</div>
+          <div class="stat-mini-label">SENT TODAY</div>
+        </div>
+        <div class="stat-mini">
+          <div class="stat-mini-value" style="color: #10b981" id="gm-response">--</div>
+          <div class="stat-mini-label">AVG RESPONSE</div>
+        </div>
+      </div>
+
+      <div class="hex-divider">EMAIL VOLUME (12H)</div>
+      <div class="bar-chart" id="gm-chart"></div>
+
+      <div class="hex-divider">INBOX</div>
+      <div id="gm-inbox"></div>
+    </div>
+  </div>
+</div>

@@ -1,15 +1,90 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Pinteresting</title>
+  <title>TRIANGLE WORKFORCE // COMMAND CENTER</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 </head>
-<body>
-	<%= link_to "Home", root_path %>
-	<%= link_to "About us", about_path %>
-<%= yield %>
+<body class="hud-body">
+
+  <!-- Scanline overlay -->
+  <div class="scanline-overlay"></div>
+
+  <!-- Top command bar -->
+  <header class="command-bar">
+    <div class="command-bar-left">
+      <div class="logo-container">
+        <div class="logo-icon">
+          <svg viewBox="0 0 60 52" class="triangle-logo">
+            <polygon points="30,2 58,50 2,50" fill="none" stroke="currentColor" stroke-width="2.5"/>
+            <polygon points="30,14 46,44 14,44" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.6"/>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <span class="logo-title">TRIANGLE WORKFORCE</span>
+          <span class="logo-subtitle">RECRUITING COMMAND CENTER</span>
+        </div>
+      </div>
+    </div>
+    <div class="command-bar-center">
+      <div class="system-status">
+        <span class="status-indicator online"></span>
+        <span class="status-text">ALL SYSTEMS OPERATIONAL</span>
+      </div>
+    </div>
+    <div class="command-bar-right">
+      <div class="datetime-display">
+        <span class="date-text" id="current-date"></span>
+        <span class="time-text" id="current-time"></span>
+      </div>
+      <div class="user-badge">
+        <span class="user-rank">CMD</span>
+        <span class="user-name">OPERATOR</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Alert ticker -->
+  <div class="alert-ticker" id="alert-ticker">
+    <div class="ticker-label">ALERTS</div>
+    <div class="ticker-content" id="ticker-content"></div>
+  </div>
+
+  <!-- Main content -->
+  <main class="dashboard-main">
+    <%= yield %>
+  </main>
+
+  <!-- Bottom status bar -->
+  <footer class="status-bar">
+    <div class="status-bar-section">
+      <span class="status-label">CLOUDTALK</span>
+      <span class="status-dot connected" id="status-cloudtalk"></span>
+    </div>
+    <div class="status-bar-section">
+      <span class="status-label">MANATAL</span>
+      <span class="status-dot connected" id="status-manatal"></span>
+    </div>
+    <div class="status-bar-section">
+      <span class="status-label">APOLLO.IO</span>
+      <span class="status-dot connected" id="status-apollo"></span>
+    </div>
+    <div class="status-bar-section">
+      <span class="status-label">PIPELINE</span>
+      <span class="status-dot connected" id="status-pipeline"></span>
+    </div>
+    <div class="status-bar-section">
+      <span class="status-label">GMAIL</span>
+      <span class="status-dot connected" id="status-gmail"></span>
+    </div>
+    <div class="status-bar-right">
+      <span class="refresh-timer">NEXT SYNC: <span id="sync-countdown">30</span>s</span>
+      <span class="version-tag">v2.1.0 // CLASSIFIED</span>
+    </div>
+  </footer>
 
 </body>
 </html>
