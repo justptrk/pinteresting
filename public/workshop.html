@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Santa's Workshop</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #0a1628 0%, #1a2a4a 30%, #2d4a7a 60%, #4a7ab5 100%);
+  font-family: Georgia, 'Times New Roman', serif;
+  color: #fff;
+  overflow-x: hidden;
+}
+
+#snow-canvas {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 1000;
+}
+
+nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  background: rgba(10, 22, 40, 0.9); backdrop-filter: blur(10px);
+  padding: 12px 30px; display: flex; justify-content: space-between; align-items: center;
+  z-index: 999; border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+}
+.nav-title { font-size: 1.4em; font-weight: bold; color: #ffd700; text-shadow: 0 0 10px rgba(255,215,0,0.5); }
+.nav-links a { color: #c8ddf0; text-decoration: none; margin-left: 20px; font-size: 0.95em; }
+.nav-links a:hover { color: #ffd700; }
+
+#hero { text-align: center; padding: 120px 20px 60px; }
+#hero h1 { font-size: 3.5em; color: #ffd700; text-shadow: 0 0 20px rgba(255,215,0,0.5); margin-bottom: 10px; animation: glow 3s ease-in-out infinite; }
+#hero p { font-size: 1.3em; color: #c8ddf0; }
+@keyframes glow { 0%,100%{ text-shadow: 0 0 20px rgba(255,215,0,0.5); } 50%{ text-shadow: 0 0 40px rgba(255,215,0,0.8), 0 0 60px rgba(255,215,0,0.3); } }
+
+#village { display: grid; grid-template-columns: repeat(3,1fr); gap: 40px; max-width: 1100px; margin: 0 auto; padding: 40px 30px 80px; }
+@media(max-width:900px){ #village{ grid-template-columns: repeat(2,1fr); } }
+@media(max-width:600px){ #village{ grid-template-columns: 1fr; } #hero h1{ font-size:2.2em; } }
+
+.building {
+  background: rgba(255,255,255,0.08); border: 2px solid rgba(255,255,255,0.15);
+  border-radius: 20px; padding: 30px 20px 20px; text-align: center; cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+}
+.building:hover { transform: translateY(-8px) scale(1.03); box-shadow: 0 15px 40px rgba(255,215,0,0.2); background: rgba(255,255,255,0.12); border-color: rgba(255,215,0,0.4); }
+.building-icon { font-size: 4em; margin-bottom: 15px; min-height: 80px; display: flex; align-items: center; justify-content: center; }
+.building-label { font-size: 1.2em; font-weight: bold; color: #ffd700; }
+
+/* Modals */
+.modal-overlay {
+  display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.75); z-index: 2000; justify-content: center; align-items: center; padding: 20px;
+}
+.modal-overlay.active { display: flex; }
+.modal {
+  background: linear-gradient(160deg, #1a2a4a, #0d1b2a); border: 2px solid rgba(255,215,0,0.3);
+  border-radius: 20px; padding: 30px; max-width: 700px; width: 100%; max-height: 85vh; overflow-y: auto;
+  position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+.modal h2 { color: #ffd700; font-size: 1.8em; margin-bottom: 20px; text-align: center; }
+.modal-close { position: absolute; top: 15px; right: 20px; background: none; border: none; color: #fff; font-size: 2em; cursor: pointer; }
+
+.action-btn {
+  display: inline-block; margin-top: 15px; padding: 12px 30px;
+  background: linear-gradient(135deg, #c41e3a, #8b0000); color: #fff;
+  border: 2px solid rgba(255,215,0,0.3); border-radius: 30px; font-size: 1em; cursor: pointer; font-family: Georgia, serif;
+}
+.action-btn:hover { transform: scale(1.05); box-shadow: 0 5px 20px rgba(196,30,58,0.4); }
+
+/* Nice meter */
+.nice-meter { margin: 20px auto; max-width: 300px; text-align: center; }
+.meter-bar { height: 25px; background: rgba(255,255,255,0.1); border-radius: 15px; overflow: hidden; border: 1px solid rgba(255,255,255,0.2); }
+.meter-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #ff4444, #ffaa00, #44ff44); border-radius: 15px; transition: width 1.5s ease; }
+.meter-score { margin-top: 8px; font-size: 1.1em; color: #c8ddf0; }
+
+/* Elf stations */
+.elf-stations { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+.station { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; text-align: center; }
+.elf { font-size: 2.5em; }
+.elf-name { color: #ffd700; font-weight: bold; margin: 5px 0; }
+.progress-bar { height: 12px; background: rgba(255,255,255,0.1); border-radius: 6px; overflow: hidden; margin: 8px 0; }
+.progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #2d5a1e, #44ff44); border-radius: 6px; transition: width 1s ease; }
+.toy-item { font-size: 0.85em; color: #c8ddf0; }
+.toy-counter { text-align: center; font-size: 1.2em; color: #c8ddf0; }
+.toy-count { color: #ffd700; font-weight: bold; font-size: 1.5em; }
+
+/* Letter */
+.letter-paper { background: #fef9e7; color: #3a2a1a; border-radius: 5px; padding: 25px; margin: 15px 0; box-shadow: 2px 3px 10px rgba(0,0,0,0.3); }
+.letter-header { font-size: 1.2em; font-weight: bold; margin-bottom: 10px; color: #5a3a1a; }
+.reply-header { color: #c41e3a; font-size: 1.3em; }
+#santa-letter { width: 100%; background: transparent; border: none; font-family: Georgia, serif; font-size: 1em; color: #3a2a1a; resize: vertical; outline: none; }
+#letter-name { margin-top: 10px; padding: 8px 12px; border: 1px solid #ccc; border-radius: 5px; font-family: Georgia, serif; font-size: 1em; width: 200px; }
+.santa-signature { margin-top: 15px; font-style: italic; font-size: 1.3em; color: #c41e3a; text-align: right; }
+
+/* Races */
+.race-lane { margin-bottom: 12px; }
+.racer-name { display: block; font-size: 0.85em; color: #ffd700; margin-bottom: 4px; }
+.racer-track { background: rgba(255,255,255,0.08); border-radius: 8px; height: 40px; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
+.racer { position: absolute; left: 5px; top: 50%; transform: translateY(-50%); font-size: 1.5em; transition: left 0.1s linear; }
+.finish-line { position: absolute; right: 8px; top: 0; bottom: 0; width: 3px; background: repeating-linear-gradient(0deg, #fff 0px, #fff 4px, #000 4px, #000 8px); }
+.race-result { text-align: center; font-size: 1.3em; color: #ffd700; min-height: 40px; padding: 10px; }
+
+/* Reindeer */
+.reindeer-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+.reindeer-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 12px; text-align: center; cursor: pointer; transition: transform 0.2s; }
+.reindeer-card:hover { transform: scale(1.05); background: rgba(255,255,255,0.1); }
+.reindeer-emoji { font-size: 2.5em; }
+.reindeer-name { color: #ffd700; font-weight: bold; margin: 5px 0; font-size: 0.9em; }
+.energy-bar { height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
+.energy-fill { height: 100%; background: linear-gradient(90deg, #ff6b35, #ffd700); border-radius: 4px; transition: width 0.5s ease; }
+
+/* Bakery */
+.cookie-decorator { text-align: center; }
+.cookie-canvas { background: rgba(255,255,255,0.05); border-radius: 15px; padding: 30px; margin: 15px 0; min-height: 200px; display: flex; justify-content: center; align-items: center; }
+.gingerbread-man { position: relative; width: 100px; height: 140px; }
+.gb-head { width: 50px; height: 50px; background: #d2691e; border-radius: 50%; margin: 0 auto; }
+.gb-body { width: 60px; height: 50px; background: #d2691e; border-radius: 30px 30px 15px 15px; margin: -5px auto 0; }
+.gb-arm { width: 45px; height: 14px; background: #d2691e; border-radius: 7px; position: absolute; top: 55px; }
+.gb-arm.left { left: -30px; transform: rotate(-20deg); }
+.gb-arm.right { right: -30px; transform: rotate(20deg); }
+.gb-leg { width: 16px; height: 40px; background: #d2691e; border-radius: 8px; position: absolute; bottom: 0; }
+.gb-leg.left { left: 22px; transform: rotate(10deg); }
+.gb-leg.right { right: 22px; transform: rotate(-10deg); }
+#gb-decorations { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+.gb-button-dec { width: 8px; height: 8px; background: #fff; border-radius: 50%; position: absolute; left: 50%; transform: translateX(-50%); }
+.gb-icing { position: absolute; height: 3px; background: #fff; border-radius: 2px; }
+.gb-sprinkle { position: absolute; width: 4px; height: 4px; border-radius: 50%; }
+.gb-eyes { position: absolute; width: 7px; height: 7px; background: #000; border-radius: 50%; top: 18px; }
+.gb-eyes.left-eye { left: 30px; }
+.gb-eyes.right-eye { left: 55px; }
+.deco-btn { padding: 8px 16px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; border-radius: 20px; cursor: pointer; font-size: 0.85em; margin: 4px; }
+.deco-btn:hover { background: rgba(255,255,255,0.2); }
+
+footer { text-align: center; padding: 30px; background: rgba(0,0,0,0.3); border-top: 1px solid rgba(255,255,255,0.1); }
+footer p { color: #c8ddf0; margin-bottom: 8px; }
+.countdown { font-size: 1.3em; color: #ffd700; }
+</style>
+</head>
+<body>
+
+<canvas id="snow-canvas"></canvas>
+
+<nav>
+  <div class="nav-title">Santa's North Pole Village</div>
+  <div class="nav-links">
+    <a href="#castle">Castle</a>
+    <a href="#toy-shop">Toy Workshop</a>
+    <a href="#post-office">Post Office</a>
+    <a href="#sled-races">Sled Races</a>
+    <a href="#reindeer">Reindeer</a>
+    <a href="#bakery">Bakery</a>
+  </div>
+</nav>
+
+<div id="hero">
+  <h1>Welcome to Santa's Workshop</h1>
+  <p>Click on any building to explore the magic of the North Pole!</p>
+</div>
+
+<div id="village">
+
+  <div class="building" id="castle" onclick="openModal('castle-modal')">
+    <div class="building-icon">&#127877;</div>
+    <div class="building-label">Santa's Castle</div>
+  </div>
+
+  <div class="building" id="toy-shop" onclick="openModal('toyshop-modal')">
+    <div class="building-icon">&#128295;</div>
+    <div class="building-label">Toy Workshop</div>
+  </div>
+
+  <div class="building" id="post-office" onclick="openModal('postoffice-modal')">
+    <div class="building-icon">&#128236;</div>
+    <div class="building-label">North Pole Post Office</div>
+  </div>
+
+  <div class="building" id="sled-races" onclick="openModal('sledrace-modal')">
+    <div class="building-icon">&#127937;</div>
+    <div class="building-label">Sled Race Arena</div>
+  </div>
+
+  <div class="building" id="reindeer" onclick="openModal('reindeer-modal')">
+    <div class="building-icon">&#129420;</div>
+    <div class="building-label">Reindeer Barn</div>
+  </div>
+
+  <div class="building" id="bakery" onclick="openModal('bakery-modal')">
+    <div class="building-icon">&#127850;</div>
+    <div class="building-label">Gingerbread Bakery</div>
+  </div>
+
+</div>
+
+<!-- CASTLE MODAL -->
+<div class="modal-overlay" id="castle-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('castle-modal')">&times;</button>
+    <h2>&#127877; Santa's Castle</h2>
+    <div style="text-align:center;">
+      <div style="font-size:5em;margin:20px 0;">&#127877;</div>
+      <p style="color:#c8ddf0;margin-bottom:20px;">Welcome to the grand throne room! Santa is reviewing the Naughty &amp; Nice list.</p>
+      <div class="nice-meter">
+        <div style="color:#ffd700;margin-bottom:8px;">Nice-O-Meter</div>
+        <div class="meter-bar"><div class="meter-fill" id="nice-fill"></div></div>
+        <div class="meter-score" id="nice-score">Checking...</div>
+      </div>
+      <button class="action-btn" onclick="checkNiceList()">Check Your Status</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOY WORKSHOP MODAL -->
+<div class="modal-overlay" id="toyshop-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('toyshop-modal')">&times;</button>
+    <h2>&#128295; Toy Workshop</h2>
+    <div class="elf-stations">
+      <div class="station">
+        <div class="elf">&#129497;</div><div class="elf-name">Jingle</div>
+        <div class="progress-bar"><div class="progress-fill" data-target="78"></div></div>
+        <div class="toy-item">Building: Teddy Bear &#128059;</div>
+      </div>
+      <div class="station">
+        <div class="elf">&#129497;</div><div class="elf-name">Sparkle</div>
+        <div class="progress-bar"><div class="progress-fill" data-target="45"></div></div>
+        <div class="toy-item">Building: Train Set &#128646;</div>
+      </div>
+      <div class="station">
+        <div class="elf">&#129497;</div><div class="elf-name">Tinsel</div>
+        <div class="progress-bar"><div class="progress-fill" data-target="92"></div></div>
+        <div class="toy-item">Building: Dollhouse &#127968;</div>
+      </div>
+      <div class="station">
+        <div class="elf">&#129497;</div><div class="elf-name">Peppermint</div>
+        <div class="progress-bar"><div class="progress-fill" data-target="30"></div></div>
+        <div class="toy-item">Building: Robot &#129302;</div>
+      </div>
+    </div>
+    <div class="toy-counter">Total Toys Made Today: <span class="toy-count" id="toy-count">0</span></div>
+    <div style="text-align:center;"><button class="action-btn" onclick="speedUpElves()">Give Hot Cocoa (Speed Boost!)</button></div>
+  </div>
+</div>
+
+<!-- POST OFFICE MODAL -->
+<div class="modal-overlay" id="postoffice-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('postoffice-modal')">&times;</button>
+    <h2>&#128236; North Pole Post Office</h2>
+    <div id="letter-form">
+      <p style="color:#c8ddf0;text-align:center;margin-bottom:10px;">Write a letter to Santa! He WILL write back!</p>
+      <div class="letter-paper">
+        <div class="letter-header">Dear Santa,</div>
+        <textarea id="santa-letter" placeholder="Tell Santa what you wish for this Christmas..." rows="6"></textarea>
+        <div><input type="text" id="letter-name" placeholder="Your name"></div>
+      </div>
+      <div style="text-align:center;"><button class="action-btn" onclick="sendLetter()">&#128232; Send Letter</button></div>
+    </div>
+    <div id="santa-reply" style="display:none;">
+      <div class="letter-paper">
+        <div class="letter-header reply-header">From Santa's Desk &#127877;</div>
+        <div id="reply-text"></div>
+        <div class="santa-signature">- Santa Claus</div>
+      </div>
+      <div style="text-align:center;"><button class="action-btn" onclick="writeAnother()">Write Another Letter</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLED RACE MODAL -->
+<div class="modal-overlay" id="sledrace-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('sledrace-modal')">&times;</button>
+    <h2>&#127937; North Pole Sled Races</h2>
+    <div class="race-arena">
+      <div class="race-lane"><span class="racer-name">Jingle the Elf</span><div class="racer-track"><div class="racer" id="racer-1">&#9975;</div><div class="finish-line"></div></div></div>
+      <div class="race-lane"><span class="racer-name">Frosty Fox</span><div class="racer-track"><div class="racer" id="racer-2">&#129418;</div><div class="finish-line"></div></div></div>
+      <div class="race-lane"><span class="racer-name">Blitzen Jr.</span><div class="racer-track"><div class="racer" id="racer-3">&#129420;</div><div class="finish-line"></div></div></div>
+      <div class="race-lane"><span class="racer-name">Polar Pete</span><div class="racer-track"><div class="racer" id="racer-4">&#128059;</div><div class="finish-line"></div></div></div>
+      <div class="race-lane"><span class="racer-name">Penny Penguin</span><div class="racer-track"><div class="racer" id="racer-5">&#128039;</div><div class="finish-line"></div></div></div>
+    </div>
+    <div id="race-result" class="race-result"></div>
+    <div style="text-align:center;"><button class="action-btn" id="race-btn" onclick="startRace()">&#127937; Start Race!</button></div>
+  </div>
+</div>
+
+<!-- REINDEER BARN MODAL -->
+<div class="modal-overlay" id="reindeer-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('reindeer-modal')">&times;</button>
+    <h2>&#129420; Reindeer Barn</h2>
+    <p style="color:#c8ddf0;text-align:center;margin-bottom:15px;">Click a reindeer to feed them!</p>
+    <div class="reindeer-grid">
+      <div class="reindeer-card" onclick="feedReindeer(this)"><div class="reindeer-emoji">&#129420;</div><div class="reindeer-name">Dasher</div><div class="energy-bar"><div class="energy-fill" style="width:70%"></div></div></div>
+      <div class="reindeer-card" onclick="feedReindeer(this)"><div class="reindeer-emoji">&#129420;</div><div class="reindeer-name">Dancer</div><div class="energy-bar"><div class="energy-fill" style="width:55%"></div></div></div>
+      <div class="reindeer-card" onclick="feedReindeer(this)"><div class="reindeer-emoji">&#129420;</div><div class="reindeer-name">Prancer</div><div class="energy-bar"><div class="energy-fill" style="width:88%"></div></div></div>
+      <div class="reindeer-card" onclick="feedReindeer(this)"><div class="reindeer-emoji">&#129420;</div><div class="reindeer-name">Vixen</div><div class="energy-bar"><div class="energy-fill" style="width:42%"></div></div></div>
+      <div class="reindeer-card" onclick="feedReindeer(this)"><div class="reindeer-emoji">&#129420;</div><div class="reindeer-name">Comet</div><div class="energy-bar"><div class="energy-fill" style="width:65%"></div></div></div>
+      <div class="reindeer-card" onclick="feedReindeer(this)"><div class="reindeer-emoji">&#129420;</div><div class="reindeer-name">Cupid</div><div class="energy-bar"><div class="energy-fill" style="width:78%"></div></div></div>
+      <div class="reindeer-card" onclick="feedReindeer(this)"><div class="reindeer-emoji">&#129420;</div><div class="reindeer-name">Donner</div><div class="energy-bar"><div class="energy-fill" style="width:50%"></div></div></div>
+      <div class="reindeer-card" onclick="feedReindeer(this)"><div class="reindeer-emoji">&#129420;</div><div class="reindeer-name">Blitzen</div><div class="energy-bar"><div class="energy-fill" style="width:91%"></div></div></div>
+      <div class="reindeer-card" onclick="feedReindeer(this)" style="border-color:rgba(255,0,0,0.3);"><div class="reindeer-emoji" style="filter:drop-shadow(0 0 10px red);">&#129420;</div><div class="reindeer-name">Rudolph</div><div class="energy-bar"><div class="energy-fill" style="width:100%"></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- BAKERY MODAL -->
+<div class="modal-overlay" id="bakery-modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('bakery-modal')">&times;</button>
+    <h2>&#127850; Gingerbread Bakery</h2>
+    <p style="color:#c8ddf0;text-align:center;">Mrs. Claus's famous gingerbread cookies! Click to decorate:</p>
+    <div class="cookie-decorator">
+      <div class="cookie-canvas">
+        <div class="gingerbread-man">
+          <div class="gb-head"></div>
+          <div class="gb-body"></div>
+          <div class="gb-arm left"></div>
+          <div class="gb-arm right"></div>
+          <div class="gb-leg left"></div>
+          <div class="gb-leg right"></div>
+          <div id="gb-decorations"></div>
+        </div>
+      </div>
+      <div>
+        <button class="deco-btn" onclick="addDecoration('button')">Add Button</button>
+        <button class="deco-btn" onclick="addDecoration('icing')">Add Icing</button>
+        <button class="deco-btn" onclick="addDecoration('sprinkle')">Sprinkles</button>
+        <button class="deco-btn" onclick="addDecoration('eyes')">Add Eyes</button>
+        <button class="deco-btn" onclick="resetCookie()">Start Over</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p>Made with magic at the North Pole</p>
+  <div class="countdown" id="xmas-countdown"></div>
+</footer>
+
+<script>
+// Snow
+var canvas = document.getElementById('snow-canvas');
+var ctx = canvas.getContext('2d');
+var flakes = [];
+
+function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+resize();
+window.addEventListener('resize', resize);
+
+for (var i = 0; i < 150; i++) {
+  flakes.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, r: Math.random()*3+1, s: Math.random()*1.5+0.5, w: Math.random()*0.5-0.25, o: Math.random()*0.7+0.3 });
+}
+
+function drawSnow() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  for (var i = 0; i < flakes.length; i++) {
+    var f = flakes[i];
+    ctx.beginPath(); ctx.arc(f.x, f.y, f.r, 0, Math.PI*2); ctx.fillStyle = 'rgba(255,255,255,'+f.o+')'; ctx.fill();
+    f.y += f.s; f.x += f.w;
+    if (f.y > canvas.height) { f.y = -5; f.x = Math.random()*canvas.width; }
+    if (f.x > canvas.width) f.x = 0;
+    if (f.x < 0) f.x = canvas.width;
+  }
+  requestAnimationFrame(drawSnow);
+}
+drawSnow();
+
+// Modals
+function openModal(id) {
+  document.getElementById(id).classList.add('active');
+  document.body.style.overflow = 'hidden';
+  if (id === 'toyshop-modal') animateElves();
+  if (id === 'castle-modal') { document.getElementById('nice-fill').style.width='0%'; document.getElementById('nice-score').textContent='Checking...'; }
+}
+function closeModal(id) { document.getElementById(id).classList.remove('active'); document.body.style.overflow=''; }
+document.addEventListener('click', function(e) { if (e.target.classList.contains('modal-overlay')) { e.target.classList.remove('active'); document.body.style.overflow=''; } });
+document.addEventListener('keydown', function(e) { if (e.key==='Escape') { document.querySelectorAll('.modal-overlay.active').forEach(function(m){m.classList.remove('active');}); document.body.style.overflow=''; } });
+
+// Castle
+function checkNiceList() {
+  var pct = Math.floor(Math.random()*30)+70;
+  var msgs = ["You're on the NICE list!","Wonderful! Extra nice this year!","Ho ho ho! One of Santa's favorites!","A big present is coming your way!","Top of the Nice list!"];
+  document.getElementById('nice-fill').style.width = '0%';
+  setTimeout(function(){ document.getElementById('nice-fill').style.width = pct+'%'; }, 100);
+  document.getElementById('nice-score').textContent = 'Scanning...';
+  setTimeout(function(){ document.getElementById('nice-score').textContent = pct+'% Nice! '+msgs[Math.floor(Math.random()*msgs.length)]; }, 1600);
+}
+
+// Toy Workshop
+var toyCount = 0;
+function animateElves() {
+  document.querySelectorAll('#toyshop-modal .progress-fill').forEach(function(f) {
+    var t = f.getAttribute('data-target'); f.style.width='0%';
+    setTimeout(function(){ f.style.width=t+'%'; }, 200);
+  });
+  toyCount += Math.floor(Math.random()*50)+100;
+  animateNumber(document.getElementById('toy-count'), toyCount);
+}
+function speedUpElves() {
+  document.querySelectorAll('#toyshop-modal .progress-fill').forEach(function(f) {
+    var c = parseInt(f.style.width)||0; var b = Math.min(c+15,100); f.style.width=b+'%'; f.setAttribute('data-target',b);
+  });
+  toyCount += Math.floor(Math.random()*200)+50;
+  animateNumber(document.getElementById('toy-count'), toyCount);
+}
+function animateNumber(el, target) {
+  var cur = parseInt(el.textContent)||0; var step = Math.ceil((target-cur)/30);
+  var t = setInterval(function(){ cur+=step; if(cur>=target){cur=target;clearInterval(t);} el.textContent=cur.toLocaleString(); }, 30);
+}
+
+// Post Office
+var replies = [
+  "Ho ho ho! What a wonderful letter! I've added your wish to my special list. My elves are already getting to work!",
+  "Thank you for your lovely letter! Mrs. Claus read it to me over hot cocoa this morning!",
+  "What a delightful letter! Rudolph and I were just talking about you. You've been SO good this year!",
+  "This is one of the best letters I've received all season! Get ready for a very special Christmas!",
+  "Your letter made my belly shake like a bowl full of jelly from laughing with joy!"
+];
+function sendLetter() {
+  var text = document.getElementById('santa-letter');
+  var name = document.getElementById('letter-name').value.trim() || 'Friend';
+  if (!text.value.trim()) { alert("Don't forget to write something to Santa!"); return; }
+  document.getElementById('letter-form').style.display='none';
+  document.getElementById('reply-text').textContent = 'Dear '+name+',\n\n'+replies[Math.floor(Math.random()*replies.length)];
+  document.getElementById('santa-reply').style.display='block';
+}
+function writeAnother() {
+  document.getElementById('santa-letter').value='';
+  document.getElementById('letter-form').style.display='block';
+  document.getElementById('santa-reply').style.display='none';
+}
+
+// Sled Races
+var racing = false;
+function startRace() {
+  if (racing) return; racing = true;
+  document.getElementById('race-btn').textContent='Racing...';
+  document.getElementById('race-result').textContent='';
+  var pos=[5,5,5,5,5], speeds=[], names=['Jingle the Elf','Frosty Fox','Blitzen Jr.','Polar Pete','Penny Penguin'];
+  for(var i=0;i<5;i++){speeds.push(Math.random()*2+1); document.getElementById('racer-'+(i+1)).style.left='5px';}
+  var iv=setInterval(function(){
+    for(var k=0;k<5;k++){
+      pos[k]+=speeds[k]+Math.random()*3;
+      var r=document.getElementById('racer-'+(k+1)), max=r.parentElement.offsetWidth-40;
+      if(pos[k]>=max){pos[k]=max;r.style.left=pos[k]+'px';clearInterval(iv);
+        document.getElementById('race-result').innerHTML='&#127942; '+names[k]+' WINS! &#127942;';
+        document.getElementById('race-btn').textContent='Race Again!'; racing=false; return;}
+      r.style.left=pos[k]+'px';
+    }
+  },50);
+}
+
+// Reindeer
+function feedReindeer(card) {
+  var fill = card.querySelector('.energy-fill');
+  var cur = parseInt(fill.style.width)||50;
+  fill.style.width = Math.min(cur+15,100)+'%';
+  card.style.transform='scale(1.15)';
+  setTimeout(function(){ card.style.transform=''; }, 300);
+}
+
+// Bakery
+var decoCount = 0;
+function addDecoration(type) {
+  var c = document.getElementById('gb-decorations'); decoCount++;
+  if (type==='button') { var d=document.createElement('div'); d.className='gb-button-dec'; d.style.top=(55+decoCount*12)+'px'; c.appendChild(d); }
+  else if (type==='icing') { var d=document.createElement('div'); d.className='gb-icing'; d.style.width=(20+Math.random()*40)+'px'; d.style.top=(30+Math.random()*80)+'px'; d.style.left=(10+Math.random()*60)+'px'; c.appendChild(d); }
+  else if (type==='sprinkle') { for(var i=0;i<8;i++){ var d=document.createElement('div'); d.className='gb-sprinkle'; d.style.background=['#ff0000','#00ff00','#0000ff','#ffff00','#ff69b4','#ff8c00'][Math.floor(Math.random()*6)]; d.style.top=(20+Math.random()*100)+'px'; d.style.left=(10+Math.random()*80)+'px'; c.appendChild(d); } }
+  else if (type==='eyes') { var l=document.createElement('div'); l.className='gb-eyes left-eye'; var r=document.createElement('div'); r.className='gb-eyes right-eye'; c.appendChild(l); c.appendChild(r); }
+}
+function resetCookie() { document.getElementById('gb-decorations').innerHTML=''; decoCount=0; }
+
+// Countdown
+function updateCountdown() {
+  var now=new Date(), xmas=new Date(now.getFullYear(),11,25);
+  if(now>xmas) xmas.setFullYear(xmas.getFullYear()+1);
+  var d=xmas-now, days=Math.floor(d/86400000), hrs=Math.floor((d%86400000)/3600000), min=Math.floor((d%3600000)/60000), sec=Math.floor((d%60000)/1000);
+  document.getElementById('xmas-countdown').textContent=days+' days, '+hrs+'h '+min+'m '+sec+'s until Christmas!';
+}
+updateCountdown(); setInterval(updateCountdown,1000);
+</script>
+</body>
+</html>
