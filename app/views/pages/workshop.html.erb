@@ -1,0 +1,352 @@
+<div id="santa-workshop">
+
+<!-- SNOW CANVAS -->
+<canvas id="snow-canvas"></canvas>
+
+<!-- TOP NAV -->
+<nav id="workshop-nav">
+  <div class="nav-title">Santa's North Pole Village</div>
+  <div class="nav-links">
+    <a href="#castle" onclick="scrollToBuilding('castle')">Castle</a>
+    <a href="#toy-shop" onclick="scrollToBuilding('toy-shop')">Toy Workshop</a>
+    <a href="#post-office" onclick="scrollToBuilding('post-office')">Post Office</a>
+    <a href="#sled-races" onclick="scrollToBuilding('sled-races')">Sled Races</a>
+    <a href="#reindeer" onclick="scrollToBuilding('reindeer')">Reindeer Barn</a>
+  </div>
+</nav>
+
+<!-- HERO BANNER -->
+<div id="hero">
+  <h1>Welcome to Santa's Workshop</h1>
+  <p>Click on any building to explore the magic of the North Pole!</p>
+  <div class="hero-glow"></div>
+</div>
+
+<!-- VILLAGE MAP -->
+<div id="village">
+
+  <!-- SANTA'S CASTLE -->
+  <div class="building" id="castle" onclick="openModal('castle-modal')">
+    <div class="building-icon">
+      <div class="castle-structure">
+        <div class="castle-tower left"></div>
+        <div class="castle-body"></div>
+        <div class="castle-tower right"></div>
+        <div class="castle-door"></div>
+        <div class="castle-flag">&#127877;</div>
+      </div>
+    </div>
+    <div class="building-label">Santa's Castle</div>
+    <div class="building-glow"></div>
+  </div>
+
+  <!-- TOY WORKSHOP -->
+  <div class="building" id="toy-shop" onclick="openModal('toyshop-modal')">
+    <div class="building-icon">
+      <div class="workshop-structure">
+        <div class="workshop-roof"></div>
+        <div class="workshop-body">
+          <div class="workshop-window lit"></div>
+          <div class="workshop-window lit"></div>
+        </div>
+        <div class="workshop-chimney">
+          <div class="smoke s1"></div>
+          <div class="smoke s2"></div>
+          <div class="smoke s3"></div>
+        </div>
+        <div class="workshop-sign">TOYS</div>
+      </div>
+    </div>
+    <div class="building-label">Toy Workshop</div>
+    <div class="building-glow"></div>
+  </div>
+
+  <!-- NORTH POLE POST OFFICE -->
+  <div class="building" id="post-office" onclick="openModal('postoffice-modal')">
+    <div class="building-icon">
+      <div class="postoffice-structure">
+        <div class="postoffice-roof"></div>
+        <div class="postoffice-body">
+          <div class="mailbox">&#128236;</div>
+        </div>
+        <div class="postoffice-sign">POST OFFICE</div>
+      </div>
+    </div>
+    <div class="building-label">North Pole Post Office</div>
+    <div class="building-glow"></div>
+  </div>
+
+  <!-- SLED RACES -->
+  <div class="building" id="sled-races" onclick="openModal('sledrace-modal')">
+    <div class="building-icon">
+      <div class="racetrack-structure">
+        <div class="race-arch">SLED RACES</div>
+        <div class="race-track">
+          <div class="track-lane"></div>
+          <div class="track-lane"></div>
+          <div class="track-lane"></div>
+        </div>
+        <div class="race-flag">&#127937;</div>
+      </div>
+    </div>
+    <div class="building-label">Sled Race Arena</div>
+    <div class="building-glow"></div>
+  </div>
+
+  <!-- REINDEER BARN -->
+  <div class="building" id="reindeer" onclick="openModal('reindeer-modal')">
+    <div class="building-icon">
+      <div class="barn-structure">
+        <div class="barn-roof"></div>
+        <div class="barn-body">
+          <div class="barn-door"></div>
+        </div>
+        <div class="barn-emoji">&#129�;</div>
+      </div>
+    </div>
+    <div class="building-label">Reindeer Barn</div>
+    <div class="building-glow"></div>
+  </div>
+
+  <!-- GINGERBREAD BAKERY -->
+  <div class="building" id="bakery" onclick="openModal('bakery-modal')">
+    <div class="building-icon">
+      <div class="bakery-structure">
+        <div class="bakery-roof"></div>
+        <div class="bakery-body">
+          <div class="bakery-window"></div>
+        </div>
+        <div class="bakery-emoji">&#127850;</div>
+      </div>
+    </div>
+    <div class="building-label">Gingerbread Bakery</div>
+    <div class="building-glow"></div>
+  </div>
+
+</div>
+
+<!-- ============ MODALS ============ -->
+
+<!-- CASTLE MODAL -->
+<div class="modal-overlay" id="castle-modal">
+  <div class="modal castle-theme">
+    <button class="modal-close" onclick="closeModal('castle-modal')">&times;</button>
+    <h2>&#127877; Santa's Castle</h2>
+    <div class="modal-content">
+      <div class="castle-interior">
+        <div class="throne-room">
+          <div class="santa-throne">&#127877;</div>
+          <p class="castle-text">Welcome to the grand throne room! Santa is reviewing the Naughty & Nice list.</p>
+          <div class="nice-meter">
+            <div class="meter-label">Nice-O-Meter</div>
+            <div class="meter-bar"><div class="meter-fill" id="nice-fill"></div></div>
+            <div class="meter-score" id="nice-score">Checking...</div>
+          </div>
+          <button class="action-btn" onclick="checkNiceList()">Check Your Status</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOY WORKSHOP MODAL -->
+<div class="modal-overlay" id="toyshop-modal">
+  <div class="modal toyshop-theme">
+    <button class="modal-close" onclick="closeModal('toyshop-modal')">&times;</button>
+    <h2>&#128295; Toy Workshop</h2>
+    <div class="modal-content">
+      <div class="elf-stations">
+        <div class="station" id="station-1">
+          <div class="elf">&#129497;</div>
+          <div class="elf-name">Jingle</div>
+          <div class="progress-bar"><div class="progress-fill" data-target="78"></div></div>
+          <div class="toy-item">Building: Teddy Bear &#128059;</div>
+        </div>
+        <div class="station" id="station-2">
+          <div class="elf">&#129497;</div>
+          <div class="elf-name">Sparkle</div>
+          <div class="progress-bar"><div class="progress-fill" data-target="45"></div></div>
+          <div class="toy-item">Building: Train Set &#128646;</div>
+        </div>
+        <div class="station" id="station-3">
+          <div class="elf">&#129497;</div>
+          <div class="elf-name">Tinsel</div>
+          <div class="progress-bar"><div class="progress-fill" data-target="92"></div></div>
+          <div class="toy-item">Building: Dollhouse &#127968;</div>
+        </div>
+        <div class="station" id="station-4">
+          <div class="elf">&#129497;</div>
+          <div class="elf-name">Peppermint</div>
+          <div class="progress-bar"><div class="progress-fill" data-target="30"></div></div>
+          <div class="toy-item">Building: Robot &#129302;</div>
+        </div>
+      </div>
+      <div class="toy-counter">
+        <span>Total Toys Made Today: </span>
+        <span class="toy-count" id="toy-count">0</span>
+      </div>
+      <button class="action-btn" onclick="speedUpElves()">Give Hot Cocoa (Speed Boost!)</button>
+    </div>
+  </div>
+</div>
+
+<!-- POST OFFICE MODAL -->
+<div class="modal-overlay" id="postoffice-modal">
+  <div class="modal postoffice-theme">
+    <button class="modal-close" onclick="closeModal('postoffice-modal')">&times;</button>
+    <h2>&#128236; North Pole Post Office</h2>
+    <div class="modal-content">
+      <div id="letter-form">
+        <p>Write a letter to Santa! He WILL write back!</p>
+        <div class="letter-paper">
+          <div class="letter-header">Dear Santa,</div>
+          <textarea id="santa-letter" placeholder="Tell Santa what you wish for this Christmas..." rows="6"></textarea>
+          <div class="letter-from">
+            <input type="text" id="letter-name" placeholder="Your name">
+          </div>
+        </div>
+        <button class="action-btn" onclick="sendLetter()">&#128232; Send Letter</button>
+      </div>
+      <div id="santa-reply" style="display:none;">
+        <div class="letter-paper reply">
+          <div class="letter-header reply-header">From Santa's Desk &#127877;</div>
+          <div id="reply-text"></div>
+          <div class="santa-signature">- Santa Claus</div>
+        </div>
+        <button class="action-btn" onclick="writAnother()">Write Another Letter</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLED RACE MODAL -->
+<div class="modal-overlay" id="sledrace-modal">
+  <div class="modal sledrace-theme">
+    <button class="modal-close" onclick="closeModal('sledrace-modal')">&times;</button>
+    <h2>&#127937; North Pole Sled Races</h2>
+    <div class="modal-content">
+      <div class="race-arena">
+        <div class="race-lane" id="lane-1">
+          <span class="racer-name">Jingle the Elf</span>
+          <div class="racer-track"><div class="racer" id="racer-1">&#9975;</div><div class="finish-line">|</div></div>
+        </div>
+        <div class="race-lane" id="lane-2">
+          <span class="racer-name">Frosty Fox</span>
+          <div class="racer-track"><div class="racer" id="racer-2">&#129418;</div><div class="finish-line">|</div></div>
+        </div>
+        <div class="race-lane" id="lane-3">
+          <span class="racer-name">Blitzen Jr.</span>
+          <div class="racer-track"><div class="racer" id="racer-3">&#129�;</div><div class="finish-line">|</div></div>
+        </div>
+        <div class="race-lane" id="lane-4">
+          <span class="racer-name">Polar Pete</span>
+          <div class="racer-track"><div class="racer" id="racer-4">&#128059;&#8205;&#10052;</div><div class="finish-line">|</div></div>
+        </div>
+        <div class="race-lane" id="lane-5">
+          <span class="racer-name">Penny Penguin</span>
+          <div class="racer-track"><div class="racer" id="racer-5">&#128039;</div><div class="finish-line">|</div></div>
+        </div>
+      </div>
+      <div id="race-result" class="race-result"></div>
+      <button class="action-btn" id="race-btn" onclick="startRace()">&#127937; Start Race!</button>
+    </div>
+  </div>
+</div>
+
+<!-- REINDEER BARN MODAL -->
+<div class="modal-overlay" id="reindeer-modal">
+  <div class="modal reindeer-theme">
+    <button class="modal-close" onclick="closeModal('reindeer-modal')">&times;</button>
+    <h2>&#129�; Reindeer Barn</h2>
+    <div class="modal-content">
+      <div class="reindeer-grid">
+        <div class="reindeer-card" onclick="feedReindeer(this, 'Dasher')">
+          <div class="reindeer-emoji">&#129�;</div>
+          <div class="reindeer-name">Dasher</div>
+          <div class="energy-bar"><div class="energy-fill" style="width:70%"></div></div>
+        </div>
+        <div class="reindeer-card" onclick="feedReindeer(this, 'Dancer')">
+          <div class="reindeer-emoji">&#129�;</div>
+          <div class="reindeer-name">Dancer</div>
+          <div class="energy-bar"><div class="energy-fill" style="width:55%"></div></div>
+        </div>
+        <div class="reindeer-card" onclick="feedReindeer(this, 'Prancer')">
+          <div class="reindeer-emoji">&#129�;</div>
+          <div class="reindeer-name">Prancer</div>
+          <div class="energy-bar"><div class="energy-fill" style="width:88%"></div></div>
+        </div>
+        <div class="reindeer-card" onclick="feedReindeer(this, 'Vixen')">
+          <div class="reindeer-emoji">&#129�;</div>
+          <div class="reindeer-name">Vixen</div>
+          <div class="energy-bar"><div class="energy-fill" style="width:42%"></div></div>
+        </div>
+        <div class="reindeer-card" onclick="feedReindeer(this, 'Comet')">
+          <div class="reindeer-emoji">&#129�;</div>
+          <div class="reindeer-name">Comet</div>
+          <div class="energy-bar"><div class="energy-fill" style="width:65%"></div></div>
+        </div>
+        <div class="reindeer-card" onclick="feedReindeer(this, 'Cupid')">
+          <div class="reindeer-emoji">&#129�;</div>
+          <div class="reindeer-name">Cupid</div>
+          <div class="energy-bar"><div class="energy-fill" style="width:78%"></div></div>
+        </div>
+        <div class="reindeer-card" onclick="feedReindeer(this, 'Donner')">
+          <div class="reindeer-emoji">&#129�;</div>
+          <div class="reindeer-name">Donner</div>
+          <div class="energy-bar"><div class="energy-fill" style="width:50%"></div></div>
+        </div>
+        <div class="reindeer-card" onclick="feedReindeer(this, 'Blitzen')">
+          <div class="reindeer-emoji">&#129�;</div>
+          <div class="reindeer-name">Blitzen</div>
+          <div class="energy-bar"><div class="energy-fill" style="width:91%"></div></div>
+        </div>
+        <div class="reindeer-card rudolph" onclick="feedReindeer(this, 'Rudolph')">
+          <div class="reindeer-emoji rudolph-nose">&#129�;</div>
+          <div class="reindeer-name">Rudolph</div>
+          <div class="energy-bar"><div class="energy-fill" style="width:100%"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BAKERY MODAL -->
+<div class="modal-overlay" id="bakery-modal">
+  <div class="modal bakery-theme">
+    <button class="modal-close" onclick="closeModal('bakery-modal')">&times;</button>
+    <h2>&#127850; Gingerbread Bakery</h2>
+    <div class="modal-content">
+      <p>Mrs. Claus's famous gingerbread cookies! Click to decorate:</p>
+      <div class="cookie-decorator">
+        <div class="cookie-canvas" id="cookie-canvas">
+          <div class="gingerbread-man">
+            <div class="gb-head"></div>
+            <div class="gb-body"></div>
+            <div class="gb-arm left"></div>
+            <div class="gb-arm right"></div>
+            <div class="gb-leg left"></div>
+            <div class="gb-leg right"></div>
+            <div class="gb-decorations" id="gb-decorations"></div>
+          </div>
+        </div>
+        <div class="decoration-tools">
+          <button class="deco-btn" onclick="addDecoration('button')">Add Button</button>
+          <button class="deco-btn" onclick="addDecoration('icing')">Add Icing</button>
+          <button class="deco-btn" onclick="addDecoration('sprinkle')">Sprinkles</button>
+          <button class="deco-btn" onclick="addDecoration('eyes')">Add Eyes</button>
+          <button class="deco-btn" onclick="resetCookie()">Start Over</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer id="workshop-footer">
+  <div class="footer-content">
+    <p>Made with magic at the North Pole</p>
+    <div class="countdown" id="xmas-countdown"></div>
+  </div>
+</footer>
+
+</div>
