@@ -11,8 +11,7 @@
        Military/Futuristic HUD Theme
        ============================================ */
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; 
     :root {
       --bg-primary: #0a0e17;
       --bg-secondary: #0d1321;
@@ -20,7 +19,7 @@
       --bg-panel-hover: #1a2332;
       --border-color: #1e3a5f;
       --border-glow: #0ea5e9;
-      --accent-cyan: #22d3ee;
+      --accent-cyan: #22d3ee
       --accent-blue: #3b82f6;
       --accent-green: #10b981;
       --accent-amber: #f59e0b;
@@ -674,12 +673,12 @@
     <!-- Row 2: Pipeline + Gmail -->
     <div class="panel-grid-2">
 
-      <!-- PIPELINE CRM -->
+      <!-- CLOSE.IO -->
       <div class="dash-panel">
         <div class="panel-header">
           <div class="panel-title">
             <div class="panel-icon">&#9733;</div>
-            <span class="panel-name">PIPELINE CRM</span>
+            <span class="panel-name">CLOSE.IO</span>
           </div>
           <span class="panel-status connected">LIVE</span>
         </div>
@@ -743,7 +742,7 @@
     <div class="status-bar-section"><span class="status-label">CLOUDTALK</span><span class="status-dot connected"></span></div>
     <div class="status-bar-section"><span class="status-label">MANATAL</span><span class="status-dot connected"></span></div>
     <div class="status-bar-section"><span class="status-label">APOLLO.IO</span><span class="status-dot connected"></span></div>
-    <div class="status-bar-section"><span class="status-label">PIPELINE</span><span class="status-dot connected"></span></div>
+    <div class="status-bar-section"><span class="status-label">CLOSE.IO</span><span class="status-dot connected"></span></div>
     <div class="status-bar-section"><span class="status-label">GMAIL</span><span class="status-dot connected"></span></div>
     <div class="status-bar-right">
       <span class="refresh-timer">NEXT SYNC: <span id="sync-countdown">30</span>s</span>
@@ -786,7 +785,7 @@
             { name: "Engineering Passive", sent: 380, opened: 245, replied: 67, meetings: 9 }
           ]
         },
-        pipeline: {
+        closeio: {
           stages: [
             { name: "Prospect", count: 15, value: 680000 },
             { name: "Qualified", count: 12, value: 520000 },
@@ -944,7 +943,7 @@
       // --- PIPELINE FUNNEL ---
       var plFunnel = document.getElementById('pl-funnel');
       if (plFunnel) {
-        var stages = DATA.pipeline.stages;
+        var stages = DATA.closeio.stages;
         var maxV = stages[0].value;
         var h = '';
         for (var i = 0; i < stages.length; i++) {
@@ -962,7 +961,7 @@
       var plDeals = document.getElementById('pl-deals-list');
       if (plDeals) {
         var h = '';
-        var deals = DATA.pipeline.deals;
+        var deals = DATA.closeio.deals;
         for (var i = 0; i < deals.length; i++) {
           var d = deals[i];
           var valStr = '$' + d.value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
