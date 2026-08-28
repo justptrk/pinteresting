@@ -146,9 +146,9 @@ export function JobBoard({ jobs, fetchedAt, errors }: Props) {
           Contract / 1099 / C2C / temporary only
         </label>
         <p className="text-sm text-zinc-500">
-          Showing {filtered.length} of {jobs.length} listings. Uncheck the
-          contract filter to include full-time roles at the same companies and
-          locations.
+          Showing {filtered.length} of {jobs.length} listings. Contract view
+          keeps 1099, C2C, contractor, and fixed-term roles; turn it off to
+          include other in-scope jobs at the same companies and locations.
         </p>
       </section>
 
