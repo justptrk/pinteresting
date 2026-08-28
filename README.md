@@ -1,5 +1,24 @@
-# pinteresting
+# Contract Watch
 
-Rails was removed from this repository so it can be reused for a different side project.
+Tracks **healthtech** and **fintech** contract-style jobs in the **NY/NJ/CT tri-state area**, **Virginia**, and **North Carolina**.
 
-Git history still contains the old One Month Rails sample app. The working tree no longer includes Ruby on Rails files.
+Listings come from public APIs (Greenhouse job boards and [The Muse](https://www.themuse.com/developers/api/v2)). The app does not scrape Indeed, LinkedIn, or other closed boards.
+
+## Run locally
+
+```bash
+npm install
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000).
+
+- Contract / 1099 / C2C / temporary is on by default.
+- Uncheck that filter to see other in-scope roles at the same companies and locations.
+- `GET /api/jobs` returns the same payload as JSON.
+
+## Tests
+
+```bash
+npm test
+```
