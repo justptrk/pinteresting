@@ -42,6 +42,12 @@ describe("detectEngagement", () => {
       detectEngagement("Associate, National Provider Contracting", ""),
     ).toBe("full_time");
   });
+
+  it("does not treat smart-contract engineering as a staffing contract", () => {
+    expect(
+      detectEngagement("Software Engineer - Smart Contract, Bridge", ""),
+    ).toBe("unknown");
+  });
 });
 
 describe("inTargetRegion", () => {
@@ -69,5 +75,15 @@ describe("inTargetRegion", () => {
         remoteCountsIfContract: true,
       }),
     ).toBe(true);
+  });
+
+  it("drops remote contract gigs tied to other cities", () => {
+    expect(
+      inTargetRegion({
+        locations: ["Chicago, US-Remote"],
+        isContract: true,
+        remoteCountsIfContract: true,
+      }),
+    ).toBe(false);
   });
 });

@@ -67,7 +67,7 @@ async function fromMuse(errors: string[]): Promise<Job[]> {
       const text = stripHtml(raw.contents ?? "");
       const locations = (raw.locations ?? []).map((item) => item.name);
       const industries = detectIndustries(
-        `${title} ${text} ${(raw.categories ?? []).map((item) => item.name).join(" ")}`,
+        `${title} ${company} ${(raw.categories ?? []).map((item) => item.name).join(" ")}`,
       );
       if (industries.length === 0) continue;
 
