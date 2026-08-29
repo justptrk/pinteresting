@@ -67,14 +67,24 @@ describe("inTargetRegion", () => {
     ).toBe(false);
   });
 
-  it("keeps remote contract gigs", () => {
+  it("keeps remote contract gigs only when a target state is named", () => {
+    expect(
+      inTargetRegion({
+        locations: ["Remote - New York"],
+        isContract: true,
+        remoteCountsIfContract: true,
+      }),
+    ).toBe(true);
+  });
+
+  it("drops generic remote contract gigs with no target state", () => {
     expect(
       inTargetRegion({
         locations: ["Remote"],
         isContract: true,
         remoteCountsIfContract: true,
       }),
-    ).toBe(true);
+    ).toBe(false);
   });
 
   it("drops remote contract gigs tied to other cities", () => {

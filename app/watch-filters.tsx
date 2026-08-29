@@ -72,7 +72,7 @@ export function WatchFilters({
             }
             className="rounded-lg border border-zinc-300 px-3 py-2 text-base font-normal text-zinc-950"
           >
-            <option value="all">All target states</option>
+            <option value="all">VA, NY/NJ/CT, and NC</option>
             <option value="remote">Remote eligible</option>
             {TARGET_STATES.map((code) => (
               <option key={code} value={code}>

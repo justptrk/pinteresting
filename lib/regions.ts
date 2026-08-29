@@ -157,17 +157,6 @@ export function classifyLocations(locations: string[]): {
   return { states: TARGET_STATES.filter((state) => states.has(state)), remote };
 }
 
-export function isGenericUsRemote(locations: string[]): boolean {
-  if (locations.length === 0) return false;
-  return locations.every((location) => {
-    if (!isRemoteLocation(location)) return false;
-    if (statesFromText(location).length > 0) return false;
-    return !/\b(chicago|san francisco|seattle|atlanta|london|dallas|austin|denver|boston|los angeles|miami)\b/i.test(
-      location,
-    );
-  });
-}
-
 export function inTargetRegion(input: {
   locations: string[];
   extraText?: string;
@@ -178,16 +167,7 @@ export function inTargetRegion(input: {
   if (states.length > 0) return true;
 
   const extraStates = statesFromText(input.extraText ?? "");
-  if (extraStates.length > 0 && remote) return true;
-
-  if (
-    remote &&
-    input.remoteCountsIfContract &&
-    input.isContract &&
-    isGenericUsRemote(input.locations)
-  ) {
-    return true;
-  }
+  if (extraStates.length > 0 && (remote || input.isContract)) return true;
 
   return false;
 }

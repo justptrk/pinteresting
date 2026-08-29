@@ -20,7 +20,7 @@ export default async function AgingPage({
     <WatchPage
       pathname="/aging"
       title="Aging report"
-      description="How long each in-scope listing has been open. Sort is oldest first. Company, location, industry, and pay filters stay with you."
+      description="How long each contractor listing has been open in Virginia, the tri-state area, and North Carolina. Oldest first."
       jobs={jobs}
       fetchedAt={fetchedAt}
       errors={errors}

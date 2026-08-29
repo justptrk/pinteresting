@@ -20,7 +20,7 @@ export default async function ListingsPage({
     <WatchPage
       pathname="/listings"
       title="Open listings"
-      description="The same filtered slice as the dashboard, as individual roles. Pay is parsed from public job text when a range is posted."
+      description="Contractor listings for Virginia, NY/NJ/CT, and North Carolina. Same company and state filters as the dashboard."
       jobs={jobs}
       fetchedAt={fetchedAt}
       errors={errors}

@@ -95,15 +95,14 @@ async function fromMuse(errors: string[]): Promise<Job[]> {
       const industries = detectIndustries(
         `${title} ${company} ${(raw.categories ?? []).map((item) => item.name).join(" ")}`,
       );
-      if (industries.length === 0) continue;
-
       const engagement = detectEngagement(title, text);
+      if (engagement !== "contract") continue;
       if (
         !inTargetRegion({
           locations,
           extraText: `${title} ${text}`,
           remoteCountsIfContract: true,
-          isContract: engagement === "contract",
+          isContract: true,
         })
       ) {
         continue;
@@ -156,6 +155,7 @@ async function fromGreenhouse(errors: string[]): Promise<Job[]> {
       const locationName = raw.location?.name ?? "";
       const locations = locationName ? [locationName] : [];
       const engagement = detectEngagement(title, locationName);
+      if (engagement !== "contract") continue;
       const industries = detectIndustries(`${title} ${locationName}`, [
         result.value.board.industry,
       ]);
@@ -165,7 +165,7 @@ async function fromGreenhouse(errors: string[]): Promise<Job[]> {
           locations,
           extraText: title,
           remoteCountsIfContract: true,
-          isContract: engagement === "contract",
+          isContract: true,
         })
       ) {
         continue;
