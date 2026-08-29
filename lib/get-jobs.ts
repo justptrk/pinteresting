@@ -2,11 +2,11 @@ import { ageInDays, agingBucket } from "./aging";
 import { detectEngagement, detectIndustries, normalizeKey } from "./classify";
 import { extractPay, payBandFromPay } from "./pay";
 import { classifyLocations, inTargetRegion } from "./regions";
-import { GREENHOUSE_BOARDS, MUSE_LOCATIONS } from "./sources";
-import type { Job, JobsPayload } from "./types";
+import { GREENHOUSE_BOARDS, MUSE_LOCATIONS, MUSE_PAGES } from "./sources";
+import type { Job, JobsPayload, RegionState } from "./types";
 
 const FETCH_INIT = {
-  headers: { "User-Agent": "contract-watch/0.1 (healthtech-fintech tracker)" },
+  headers: { "User-Agent": "contract-watch/0.1 (contractor tracker)" },
   next: { revalidate: 1800 },
 };
 
@@ -55,7 +55,24 @@ function withDerivedFields(
     aging: agingBucket(ageInDays(job.publishedAt)),
     pay,
     payBand: payBandFromPay(pay),
-    payLabel: pay?.label ?? "Pay not posted",
+    payLabel: pay?.label ?? "Rate not posted",
+  };
+}
+
+function resolveStates(
+  locations: string[],
+  extraText: string,
+  hubStates: RegionState[],
+): { states: RegionState[]; remote: boolean } {
+  const classified = classifyLocations(locations);
+  const extra = extraText ? classifyLocations([extraText]).states : [];
+  const merged = new Set<RegionState>([...classified.states, ...extra]);
+  if (merged.size === 0 && classified.remote) {
+    for (const state of hubStates) merged.add(state);
+  }
+  return {
+    states: [...merged],
+    remote: classified.remote,
   };
 }
 
@@ -70,17 +87,18 @@ async function fetchJson<T>(url: string): Promise<T> {
 async function fromMuse(errors: string[]): Promise<Job[]> {
   const jobs: Job[] = [];
   const seen = new Set<string>();
-
-  const pages = MUSE_LOCATIONS.map((location) =>
-    fetchJson<{ results?: MuseJob[] }>(
-      `https://www.themuse.com/api/public/jobs?page=0&descending=true&location=${encodeURIComponent(location)}`,
-    ).then((payload) => payload.results ?? []),
+  const requests = MUSE_LOCATIONS.flatMap((location) =>
+    MUSE_PAGES.map((page) =>
+      fetchJson<{ results?: MuseJob[] }>(
+        `https://www.themuse.com/api/public/jobs?page=${page}&descending=true&location=${encodeURIComponent(location)}`,
+      ).then((payload) => payload.results ?? []),
+    ),
   );
 
-  const settled = await Promise.allSettled(pages);
-  for (const [index, result] of settled.entries()) {
+  const settled = await Promise.allSettled(requests);
+  for (const result of settled) {
     if (result.status === "rejected") {
-      errors.push(`The Muse (${MUSE_LOCATIONS[index]}): ${result.reason}`);
+      errors.push(`The Muse: ${result.reason}`);
       continue;
     }
     for (const raw of result.value) {
@@ -93,7 +111,7 @@ async function fromMuse(errors: string[]): Promise<Job[]> {
       const text = stripHtml(raw.contents ?? "");
       const locations = (raw.locations ?? []).map((item) => item.name);
       const industries = detectIndustries(
-        `${title} ${company} ${(raw.categories ?? []).map((item) => item.name).join(" ")}`,
+        `${title} ${company} ${(raw.categories ?? []).map((item) => item.name).join(" ")} ${text}`,
       );
       const engagement = detectEngagement(title, text);
       if (engagement !== "contract") continue;
@@ -101,14 +119,13 @@ async function fromMuse(errors: string[]): Promise<Job[]> {
         !inTargetRegion({
           locations,
           extraText: `${title} ${text}`,
-          remoteCountsIfContract: true,
           isContract: true,
         })
       ) {
         continue;
       }
 
-      const { states, remote } = classifyLocations(locations);
+      const { states, remote } = resolveStates(locations, `${title} ${text}`, []);
       jobs.push(
         withDerivedFields(
           {
@@ -154,24 +171,30 @@ async function fromGreenhouse(errors: string[]): Promise<Job[]> {
       const company = raw.company_name || result.value.board.company;
       const locationName = raw.location?.name ?? "";
       const locations = locationName ? [locationName] : [];
-      const engagement = detectEngagement(title, locationName);
+      const text = stripHtml(raw.content ?? "");
+      const engagement = detectEngagement(title, text);
       if (engagement !== "contract") continue;
-      const industries = detectIndustries(`${title} ${locationName}`, [
+      const industries = detectIndustries(`${title} ${text}`, [
         result.value.board.industry,
       ]);
+      const hubStates = result.value.board.hubStates;
 
       if (
         !inTargetRegion({
           locations,
-          extraText: title,
-          remoteCountsIfContract: true,
+          extraText: `${title} ${text}`,
           isContract: true,
+          hubStates,
         })
       ) {
         continue;
       }
 
-      const { states, remote } = classifyLocations(locations);
+      const { states, remote } = resolveStates(
+        locations,
+        `${title} ${text}`,
+        hubStates,
+      );
       jobs.push(
         withDerivedFields(
           {
@@ -187,7 +210,7 @@ async function fromGreenhouse(errors: string[]): Promise<Job[]> {
             engagement,
             publishedAt: raw.first_published || raw.updated_at || null,
           },
-          stripHtml(raw.content ?? ""),
+          text,
         ),
       );
     }
@@ -196,15 +219,150 @@ async function fromGreenhouse(errors: string[]): Promise<Job[]> {
   return jobs;
 }
 
+type RemoteOkJob = {
+  id?: string | number;
+  position?: string;
+  company?: string;
+  location?: string;
+  description?: string;
+  apply_url?: string;
+  url?: string;
+  date?: string;
+  tags?: string[];
+};
+
+async function fromRemoteOk(errors: string[]): Promise<Job[]> {
+  try {
+    const rows = await fetchJson<RemoteOkJob[]>("https://remoteok.com/api");
+    const jobs: Job[] = [];
+    for (const raw of rows) {
+      if (!raw || !raw.position) continue;
+      const title = raw.position;
+      const company = raw.company || "Unknown";
+      const text = stripHtml(raw.description ?? "");
+      const locations = raw.location ? [raw.location] : ["Remote"];
+      const blob = `${title} ${(raw.tags ?? []).join(" ")} ${text}`;
+      if (detectEngagement(title, blob) !== "contract") continue;
+      if (
+        !inTargetRegion({
+          locations,
+          extraText: blob,
+          isContract: true,
+        })
+      ) {
+        continue;
+      }
+      const industries = detectIndustries(blob);
+      const { states, remote } = resolveStates(locations, blob, []);
+      jobs.push(
+        withDerivedFields(
+          {
+            id: `remoteok-${raw.id ?? normalizeKey(company, title)}`,
+            title,
+            company,
+            url: raw.apply_url || raw.url || "https://remoteok.com",
+            source: "remoteok",
+            locations,
+            states,
+            remote,
+            industries,
+            engagement: "contract",
+            publishedAt: raw.date ?? null,
+          },
+          text,
+        ),
+      );
+    }
+    return jobs;
+  } catch (error) {
+    errors.push(`RemoteOK: ${error}`);
+    return [];
+  }
+}
+
+type JobicyJob = {
+  id?: string | number;
+  jobTitle?: string;
+  companyName?: string;
+  jobType?: string | string[];
+  jobGeo?: string | string[];
+  jobIndustry?: string | string[];
+  jobDescription?: string;
+  jobExcerpt?: string;
+  url?: string;
+  pubDate?: string;
+};
+
+function asList(value: string | string[] | undefined): string[] {
+  if (!value) return [];
+  return Array.isArray(value) ? value : [value];
+}
+
+async function fromJobicy(errors: string[]): Promise<Job[]> {
+  try {
+    const payload = await fetchJson<{ jobs?: JobicyJob[] }>(
+      "https://jobicy.com/api/v2/remote-jobs?count=100",
+    );
+    const jobs: Job[] = [];
+    for (const raw of payload.jobs ?? []) {
+      const title = raw.jobTitle ?? "Untitled";
+      const company = raw.companyName ?? "Unknown";
+      const types = asList(raw.jobType).join(" ");
+      const geos = asList(raw.jobGeo);
+      const text = stripHtml(`${raw.jobExcerpt ?? ""} ${raw.jobDescription ?? ""}`);
+      const blob = `${title} ${types} ${geos.join(" ")} ${text}`;
+      if (detectEngagement(title, blob) !== "contract") continue;
+      if (
+        !inTargetRegion({
+          locations: geos.length ? geos : ["Remote"],
+          extraText: blob,
+          isContract: true,
+        })
+      ) {
+        continue;
+      }
+      const industries = detectIndustries(
+        `${blob} ${asList(raw.jobIndustry).join(" ")}`,
+      );
+      const locations = geos.length ? geos : ["Remote"];
+      const { states, remote } = resolveStates(locations, blob, []);
+      jobs.push(
+        withDerivedFields(
+          {
+            id: `jobicy-${raw.id ?? normalizeKey(company, title)}`,
+            title,
+            company,
+            url: raw.url ?? "https://jobicy.com",
+            source: "jobicy",
+            locations,
+            states,
+            remote,
+            industries,
+            engagement: "contract",
+            publishedAt: raw.pubDate ?? null,
+          },
+          text,
+        ),
+      );
+    }
+    return jobs;
+  } catch (error) {
+    errors.push(`Jobicy: ${error}`);
+    return [];
+  }
+}
+
 export async function getJobs(): Promise<JobsPayload> {
   const errors: string[] = [];
-  const [muse, greenhouse] = await Promise.all([
+  const [muse, greenhouse, remoteok, jobicy] = await Promise.all([
     fromMuse(errors),
     fromGreenhouse(errors),
+    fromRemoteOk(errors),
+    fromJobicy(errors),
   ]);
 
   const merged = new Map<string, Job>();
-  for (const job of [...greenhouse, ...muse]) {
+  for (const job of [...greenhouse, ...muse, ...remoteok, ...jobicy]) {
     const key = normalizeKey(job.company, job.title);
     if (!merged.has(key)) merged.set(key, job);
   }

@@ -46,6 +46,12 @@ export function WatchPage({
           </p>
         </div>
         <WatchFilters pathname={pathname} filters={filters} companies={companies} />
+        <p className="text-sm text-zinc-500">
+          These are contractor listings from public career-site APIs (company
+          boards, The Muse, RemoteOK, Jobicy). Most C2C/staffing reqs never
+          appear on those feeds, so a small number in five states is a source
+          limit, not an empty market.
+        </p>
         {errors.length > 0 ? (
           <p className="rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-950">
             Some sources failed this refresh ({errors.length}). Numbers below

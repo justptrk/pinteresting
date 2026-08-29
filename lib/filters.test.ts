@@ -8,7 +8,7 @@ const sample: Job = {
   title: "1099 Nurse Practitioner",
   company: "Oscar Health",
   url: "https://example.com",
-  source: "greenhouse",
+  source: "greenhouse" as const,
   locations: ["New York, New York, United States"],
   states: ["NY"],
   remote: false,

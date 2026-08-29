@@ -10,7 +10,7 @@ export type Job = {
   title: string;
   company: string;
   url: string;
-  source: "themuse" | "greenhouse";
+  source: "themuse" | "greenhouse" | "remoteok" | "jobicy";
   locations: string[];
   states: RegionState[];
   remote: boolean;

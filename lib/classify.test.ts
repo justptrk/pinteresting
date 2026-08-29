@@ -96,4 +96,14 @@ describe("inTargetRegion", () => {
       }),
     ).toBe(false);
   });
+
+  it("keeps a remote contractor when the company is based in the region", () => {
+    expect(
+      inTargetRegion({
+        locations: ["Remote"],
+        isContract: true,
+        hubStates: ["NY"],
+      }),
+    ).toBe(true);
+  });
 });

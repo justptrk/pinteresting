@@ -162,12 +162,21 @@ export function inTargetRegion(input: {
   extraText?: string;
   remoteCountsIfContract?: boolean;
   isContract?: boolean;
+  hubStates?: RegionState[];
 }): boolean {
   const { states, remote } = classifyLocations(input.locations);
   if (states.length > 0) return true;
 
   const extraStates = statesFromText(input.extraText ?? "");
   if (extraStates.length > 0 && (remote || input.isContract)) return true;
+
+  if (
+    input.isContract &&
+    remote &&
+    (input.hubStates ?? []).some((state) => TARGET_STATES.includes(state))
+  ) {
+    return true;
+  }
 
   return false;
 }
