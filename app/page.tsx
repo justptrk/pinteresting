@@ -20,7 +20,7 @@ export default async function Home({
     <WatchPage
       pathname="/"
       title="Hiring dashboard"
-      description="Open healthtech and fintech roles in the NY/NJ/CT tri-state area, Virginia, and North Carolina. Drill in by company, location, aging, industry, or pay."
+      description="Companies hiring contractors in healthtech and fintech. Filter by company, state, how long the role has been open, industry, and hourly contract rate — not permanent salary bands."
       jobs={jobs}
       fetchedAt={fetchedAt}
       errors={errors}

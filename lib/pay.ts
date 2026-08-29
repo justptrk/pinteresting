@@ -9,15 +9,17 @@ export type Pay = {
 
 export type PayBand =
   | "unknown"
-  | "under_150k"
-  | "150_250k"
-  | "over_250k";
+  | "under_75_hr"
+  | "75_125_hr"
+  | "over_125_hr"
+  | "salary_posted";
 
 export const PAY_BAND_LABELS: Record<PayBand, string> = {
-  unknown: "Pay not posted",
-  under_150k: "Under $150k",
-  "150_250k": "$150k–$250k",
-  over_250k: "$250k+",
+  unknown: "Rate not posted",
+  under_75_hr: "Under $75 / hr",
+  "75_125_hr": "$75–$125 / hr",
+  over_125_hr: "$125+ / hr",
+  salary_posted: "Annual salary (not a contract rate)",
 };
 
 function parseAmount(raw: string): number {
@@ -27,16 +29,13 @@ function parseAmount(raw: string): number {
   return compact.endsWith("k") ? value * 1000 : value;
 }
 
-function annualize(amount: number, unit: PayUnit): number {
-  return unit === "hour" ? amount * 2000 : amount;
-}
-
 export function payBandFromPay(pay: Pay | null): PayBand {
   if (!pay) return "unknown";
-  const mid = annualize((pay.min + pay.max) / 2, pay.unit);
-  if (mid < 150_000) return "under_150k";
-  if (mid <= 250_000) return "150_250k";
-  return "over_250k";
+  if (pay.unit === "year") return "salary_posted";
+  const mid = (pay.min + pay.max) / 2;
+  if (mid < 75) return "under_75_hr";
+  if (mid <= 125) return "75_125_hr";
+  return "over_125_hr";
 }
 
 export function extractPay(text: string): Pay | null {

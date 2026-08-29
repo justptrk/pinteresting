@@ -14,7 +14,18 @@ describe("extractPay", () => {
   it("reads annual ranges", () => {
     const pay = extractPay("Salary $140,000 – $180,000 per year plus bonus");
     expect(pay).toMatchObject({ min: 140000, max: 180000, unit: "year" });
-    expect(payBandFromPay(pay)).toBe("150_250k");
+    expect(payBandFromPay(pay)).toBe("salary_posted");
+  });
+
+  it("bands contractor rates by the hour", () => {
+    expect(
+      payBandFromPay({
+        min: 62,
+        max: 92,
+        unit: "hour",
+        label: "$62–$92 / hr",
+      }),
+    ).toBe("75_125_hr");
   });
 
   it("treats bare mid-range dollars as hourly", () => {

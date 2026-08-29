@@ -24,7 +24,7 @@ export function SiteNav({
             Contract watch
           </p>
           <p className="text-sm text-zinc-600">
-            Healthtech and fintech · NY/NJ/CT · VA · NC
+            Contract roles · healthtech and fintech · US states
           </p>
         </div>
         <nav className="flex flex-wrap gap-2">

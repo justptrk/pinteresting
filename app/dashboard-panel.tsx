@@ -70,9 +70,9 @@ export function DashboardPanel({
           href={`/aging${filtersToQuery({ ...filters, aging: "61+" })}`}
         />
         <Stat
-          label="Pay posted"
+          label="Hourly rate posted"
           value={withPay}
-          hint="From job text"
+          hint="Contract rates, not FTE salary"
           href={`/listings${filtersToQuery(filters)}`}
         />
         <Stat
@@ -117,7 +117,7 @@ export function DashboardPanel({
           patchFor={(key) => ({ industry: key as JobFilters["industry"] })}
         />
         <BreakdownList
-          title="By pay"
+          title="By contract rate"
           rows={pay}
           href="/"
           filters={filters}

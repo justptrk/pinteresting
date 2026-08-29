@@ -13,7 +13,7 @@ Listings come from public APIs (Greenhouse job boards and [The Muse](https://www
 
 Filters stay in the URL, so you can move between pages without losing a company, location, aging bucket, industry, or pay slice.
 
-Pay is parsed from public job text when a range is posted. Hourly rates are annualized at 2,000 hours for banding only.
+Pay navigation uses **hourly contract rates** (under $75 / hr, $75–$125 / hr, $125+ / hr). Annual FTE salaries are kept in a separate “not a contract rate” bucket so they are not mixed into contractor pay.
 
 ## Run locally
 

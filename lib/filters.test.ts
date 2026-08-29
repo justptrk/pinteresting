@@ -18,7 +18,7 @@ const sample: Job = {
   ageDays: 28,
   aging: "15-30",
   pay: { min: 62, max: 92, unit: "hour", label: "$62–$92 / hr" },
-  payBand: "under_150k",
+  payBand: "75_125_hr",
   payLabel: "$62–$92 / hr",
 };
 
@@ -27,7 +27,7 @@ describe("applyJobFilters", () => {
     const filters = parseFilters({
       company: "Oscar Health",
       aging: "15-30",
-      pay: "under_150k",
+      pay: "75_125_hr",
     });
     expect(applyJobFilters([sample], filters)).toHaveLength(1);
     expect(

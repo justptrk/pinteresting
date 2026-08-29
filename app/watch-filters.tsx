@@ -129,7 +129,7 @@ export function WatchFilters({
             }
             className="rounded-lg border border-zinc-300 px-3 py-2 text-base font-normal text-zinc-950"
           >
-            <option value="all">All pay bands</option>
+            <option value="all">All contract rates</option>
             {(Object.keys(PAY_BAND_LABELS) as PayBand[]).map((band) => (
               <option key={band} value={band}>
                 {PAY_BAND_LABELS[band]}

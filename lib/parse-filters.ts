@@ -35,7 +35,7 @@ export function parseFilters(
       ? (aging as AgingBucket)
       : "all",
     pay: PAY_BANDS.includes(pay as PayBand) ? (pay as PayBand) : "all",
-    contractOnly: first(searchParams.contract) === "1",
+    contractOnly: first(searchParams.contract) !== "0",
   };
 }
 
@@ -47,7 +47,7 @@ export function filtersToQuery(filters: JobFilters): string {
   if (filters.company) params.set("company", filters.company);
   if (filters.aging !== "all") params.set("aging", filters.aging);
   if (filters.pay !== "all") params.set("pay", filters.pay);
-  if (filters.contractOnly) params.set("contract", "1");
+  params.set("contract", filters.contractOnly ? "1" : "0");
   const query = params.toString();
   return query ? `?${query}` : "";
 }
