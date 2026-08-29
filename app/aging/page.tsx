@@ -1,11 +1,11 @@
 import { getJobs } from "@/lib/get-jobs";
 import { parseFilters } from "@/lib/parse-filters";
-import { DashboardPanel } from "./dashboard-panel";
-import { WatchPage } from "./watch-page";
+import { AgingReport } from "../aging-report";
+import { WatchPage } from "../watch-page";
 
 export const revalidate = 1800;
 
-export default async function Home({
+export default async function AgingPage({
   searchParams,
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -18,17 +18,15 @@ export default async function Home({
 
   return (
     <WatchPage
-      pathname="/"
-      title="Hiring dashboard"
-      description="Open healthtech and fintech roles in the NY/NJ/CT tri-state area, Virginia, and North Carolina. Drill in by company, location, aging, industry, or pay."
+      pathname="/aging"
+      title="Aging report"
+      description="How long each in-scope listing has been open. Sort is oldest first. Company, location, industry, and pay filters stay with you."
       jobs={jobs}
       fetchedAt={fetchedAt}
       errors={errors}
       filters={filters}
     >
-      {(filtered) => (
-        <DashboardPanel jobs={jobs} filtered={filtered} filters={filters} />
-      )}
+      {(filtered) => <AgingReport jobs={filtered} filters={filters} />}
     </WatchPage>
   );
 }

@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Contract Watch",
   description:
-    "Healthtech and fintech contract roles in the NY/NJ/CT tri-state area, Virginia, and North Carolina.",
+    "Dashboard and aging report for healthtech and fintech roles in the NY/NJ/CT tri-state area, Virginia, and North Carolina.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

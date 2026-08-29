@@ -1,11 +1,11 @@
 import { getJobs } from "@/lib/get-jobs";
 import { parseFilters } from "@/lib/parse-filters";
-import { DashboardPanel } from "./dashboard-panel";
-import { WatchPage } from "./watch-page";
+import { JobBoard } from "../job-board";
+import { WatchPage } from "../watch-page";
 
 export const revalidate = 1800;
 
-export default async function Home({
+export default async function ListingsPage({
   searchParams,
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -18,17 +18,15 @@ export default async function Home({
 
   return (
     <WatchPage
-      pathname="/"
-      title="Hiring dashboard"
-      description="Open healthtech and fintech roles in the NY/NJ/CT tri-state area, Virginia, and North Carolina. Drill in by company, location, aging, industry, or pay."
+      pathname="/listings"
+      title="Open listings"
+      description="The same filtered slice as the dashboard, as individual roles. Pay is parsed from public job text when a range is posted."
       jobs={jobs}
       fetchedAt={fetchedAt}
       errors={errors}
       filters={filters}
     >
-      {(filtered) => (
-        <DashboardPanel jobs={jobs} filtered={filtered} filters={filters} />
-      )}
+      {(filtered) => <JobBoard jobs={filtered} />}
     </WatchPage>
   );
 }

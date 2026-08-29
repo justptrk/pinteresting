@@ -1,4 +1,6 @@
+import { ageInDays, agingBucket } from "./aging";
 import { detectEngagement, detectIndustries, normalizeKey } from "./classify";
+import { extractPay, payBandFromPay } from "./pay";
 import { classifyLocations, inTargetRegion } from "./regions";
 import { GREENHOUSE_BOARDS, MUSE_LOCATIONS } from "./sources";
 import type { Job, JobsPayload } from "./types";
@@ -27,10 +29,34 @@ type GreenhouseJob = {
   first_published?: string;
   location?: { name?: string };
   company_name?: string;
+  content?: string;
 };
 
 function stripHtml(value: string): string {
-  return value.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+  return value
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&#39;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/&amp;/g, "&")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function withDerivedFields(
+  job: Omit<Job, "ageDays" | "aging" | "pay" | "payBand" | "payLabel">,
+  payText: string,
+): Job {
+  const pay = extractPay(`${job.title} ${payText}`);
+  return {
+    ...job,
+    ageDays: ageInDays(job.publishedAt),
+    aging: agingBucket(ageInDays(job.publishedAt)),
+    pay,
+    payBand: payBandFromPay(pay),
+    payLabel: pay?.label ?? "Pay not posted",
+  };
 }
 
 async function fetchJson<T>(url: string): Promise<T> {
@@ -84,19 +110,24 @@ async function fromMuse(errors: string[]): Promise<Job[]> {
       }
 
       const { states, remote } = classifyLocations(locations);
-      jobs.push({
-        id: `muse-${raw.id}`,
-        title,
-        company,
-        url: raw.refs?.landing_page ?? `https://www.themuse.com/jobs/${raw.id}`,
-        source: "themuse",
-        locations: locations.length ? locations : remote ? ["Remote"] : [],
-        states,
-        remote,
-        industries,
-        engagement,
-        publishedAt: raw.publication_date ?? null,
-      });
+      jobs.push(
+        withDerivedFields(
+          {
+            id: `muse-${raw.id}`,
+            title,
+            company,
+            url: raw.refs?.landing_page ?? `https://www.themuse.com/jobs/${raw.id}`,
+            source: "themuse",
+            locations: locations.length ? locations : remote ? ["Remote"] : [],
+            states,
+            remote,
+            industries,
+            engagement,
+            publishedAt: raw.publication_date ?? null,
+          },
+          text,
+        ),
+      );
     }
   }
 
@@ -108,7 +139,7 @@ async function fromGreenhouse(errors: string[]): Promise<Job[]> {
 
   const requests = GREENHOUSE_BOARDS.map((board) =>
     fetchJson<{ jobs?: GreenhouseJob[] }>(
-      `https://boards-api.greenhouse.io/v1/boards/${board.token}/jobs`,
+      `https://boards-api.greenhouse.io/v1/boards/${board.token}/jobs?content=true`,
     ).then((payload) => ({ board, jobs: payload.jobs ?? [] })),
   );
 
@@ -141,19 +172,24 @@ async function fromGreenhouse(errors: string[]): Promise<Job[]> {
       }
 
       const { states, remote } = classifyLocations(locations);
-      jobs.push({
-        id: `gh-${board.token}-${raw.id}`,
-        title,
-        company,
-        url: raw.absolute_url,
-        source: "greenhouse",
-        locations: locations.length ? locations : ["Remote"],
-        states,
-        remote,
-        industries,
-        engagement,
-        publishedAt: raw.first_published || raw.updated_at || null,
-      });
+      jobs.push(
+        withDerivedFields(
+          {
+            id: `gh-${board.token}-${raw.id}`,
+            title,
+            company,
+            url: raw.absolute_url,
+            source: "greenhouse",
+            locations: locations.length ? locations : ["Remote"],
+            states,
+            remote,
+            industries,
+            engagement,
+            publishedAt: raw.first_published || raw.updated_at || null,
+          },
+          stripHtml(raw.content ?? ""),
+        ),
+      );
     }
   }
 
