@@ -1,6 +1,5 @@
-# One Month Rails
+# pinteresting
 
-This is the pinteresting sample application for
-[*One Month rails*] (http://onemonthrails.com)
+Rails was removed from this repository so it can be reused for a different side project.
 
-by [Patrick Kelly] (http://townhall.com)
+Git history still contains the old One Month Rails sample app. The working tree no longer includes Ruby on Rails files.
